@@ -274,69 +274,7 @@ void interfaceNonPerpendicular(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, c
 
 }
 
-void interfaceMixing(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, cv::Point& leftInterface, cv::Point& rightInterface)
-{
-	cv::Mat process = (*image)(bed);
-	cv::Mat ThresholdMask;
 
-	control interfaceNonPerpendicularThreshold("thresholds.txt","InterfaceNonPerpendicularThreshold");
-	cv::inRange(process, interfaceNonPerpendicularThreshold.returnThreshold(), 255, ThresholdMask);
-
-	control interfaceThreshold("thresholds.txt", "StdDevInterface");
-	float stdDevMin = interfaceThreshold.returnThreshold();
-//	std::cout << stdDevMin << std::endl;
-	
-	bool found = false;
-	for (int i = 0; i < process.cols; i++)
-	{
-		cv::Scalar mean, stddev;
-		cv::Rect slidingWindow(i, 0, 1, process.rows);
-		cv::Mat localMask = ThresholdMask(slidingWindow);
-
-//		cv::namedWindow("test", cv::WINDOW_NORMAL);
-//		cv::imshow("test", localMask);
-//		cv::waitKey(0);
-//		cv::imshow("test", process(slidingWindow));
-//		cv::waitKey(0);
-
-		cv::meanStdDev(process(slidingWindow), mean, stddev, localMask);
-
-//		int brightSum = cv::sum(maskBrighter(slidingWindow))[0];
-//		int darkSum = cv::sum(maskDarker(slidingWindow))[0];
-//		float brightRatio = (float)brightSum / (brightSum + darkSum);
-//		float darkRatio = (float)darkSum / (brightSum + darkSum);
-
-//		std::cout << brightRatio << std::endl;
-//		control interfaceThreshold("thresholds.txt", "InterfaceRatioMax");
-//		float ratioMax = interfaceThreshold.returnThreshold();
-
-//		std::cout << mean[0] << " , " << stddev[0] << std::endl;
-		if (stddev[0] > stdDevMin)
-		{
-			if (not found)
-			{
-				found = true;
-				leftInterface = cv::Point(i,0);
-			}
-		else
-		{
-			if (found)
-			{
-				rightInterface = cv::Point(i,process.rows);
-				break;
-			}
-		}
-	}
-	}
-
-	//adjust to full frame
-	cv::Point tranlation(bed.x, bed.y);
-	leftInterface += tranlation;
-	rightInterface += tranlation;
-
-	cv::rectangle(*exibir, leftInterface, rightInterface, cv::Scalar(255, 0, 0), 3, 8);
-
-}
 
 
 

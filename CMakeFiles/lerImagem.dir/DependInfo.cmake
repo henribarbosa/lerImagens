@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/user/Área de Trabalho/Teste/lerImagem/src/hough.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/hough.cpp.o"
   "/home/user/Área de Trabalho/Teste/lerImagem/src/lagrangian.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/lagrangian.cpp.o"
   "/home/user/Área de Trabalho/Teste/lerImagem/src/lerImagem.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o"
+  "/home/user/Área de Trabalho/Teste/lerImagem/src/mixing.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/mixing.cpp.o"
   "/home/user/Área de Trabalho/Teste/lerImagem/src/preProcess.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/preProcess.cpp.o"
   "/home/user/Área de Trabalho/Teste/lerImagem/src/read_control.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/read_control.cpp.o"
   )

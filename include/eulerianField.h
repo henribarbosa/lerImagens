@@ -12,7 +12,6 @@ private:
 	int NumberHeights, NumberWidths;
 	float Height, Width;
 	int* numberPoints = nullptr;
-	long double* Field = nullptr;
 	float* Heights = nullptr;
 	float* Widths = nullptr;
 	std::string FieldName;
@@ -21,6 +20,8 @@ private:
 	void resetField();
 
 public:
+	long double* Field = nullptr;
+
 	eulerianField(int NumberHeights, int NumberWidths, float Height, float Width, const char* fieldName);
 	eulerianField();
 	virtual ~eulerianField();
@@ -28,6 +29,9 @@ public:
 	void addParticle(float fieldValue, float x, float y);
 	void consolidateField();
 	void writeFrame(int frameNumber);
+	float cellTop(int fieldAdress);
+	float cellBottom(int fieldAdress);
+	int fieldSize();
 };
 
 struct Velocity

@@ -14,6 +14,7 @@
 #include "../include/auction.h"
 #include "../include/preProcess.h"
 #include "../include/read_control.h"
+#include "../include/mixing.h"
 
 
 #if defined _WIN32
@@ -106,6 +107,8 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 	particle_track.setScale(scale);
 	particle_track.setBoundaries(bottom, left);
 	particle_track.startFields();
+
+	Mixing mixing_track(bottom, left, scale);
 	
 	if (Method == "expansion" || Method == "plugs" || Method == "all")
 	{
@@ -156,8 +159,9 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 			if (bidisperse)
 			{
 				cv::Point rightInterface, leftInterface;
-				interfaceNonPerpendicular(&image, &exibir, bed, leftInterface, rightInterface);
-
+//				interfaceNonPerpendicular(&image, &exibir, bed, leftInterface, rightInterface);
+				mixing_track.interfaceMixing(&exibir, leftInterface, rightInterface, i);
+//
 				float interfaceHeight = (bottom - (rightInterface.x + leftInterface.x)/2.0) * scale;
 				float interfaceAngle = std::atan( float(rightInterface.x - leftInterface.x) / float(rightInterface.y - leftInterface.y) );
 
@@ -241,7 +245,7 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 			if (bidisperse)
 			{
 				cv::Point rightInterface, leftInterface;
-				interfaceMixing(&image, &exibir, bed, leftInterface, rightInterface);
+				mixing_track.interfaceMixing(&exibir, leftInterface, rightInterface, i);
 //				interfaceNonPerpendicular(&image, &exibir, bed, leftInterface, rightInterface);
 
 				float interfaceHeight = (bottom - (rightInterface.x + leftInterface.x)/2.0) * scale;

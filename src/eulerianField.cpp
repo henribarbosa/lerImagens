@@ -313,3 +313,23 @@ void eulerianFieldGranularTemp::addParticle(float u, float v, float x, float y)
 	VelocityVector.push_back(Velocity(u,v,heightIndex*NumberWidths+widthIndex));
 	//std::cout << heightIndex << " , " << widthIndex << " : " << Field[heightIndex*NumberWidths+widthIndex] << " , " << numberPoints[heightIndex*NumberWidths+widthIndex] << std::endl;
 }
+
+float eulerianField::cellTop(int fieldAdress)
+{
+	int height = fieldAdress / NumberWidths;
+	if (height < (NumberHeights - 1))
+		return Heights[height+1];
+
+	return Heights[NumberHeights-1] + (Heights[1] - Heights[0]);
+}
+
+float eulerianField::cellBottom(int fieldAdress)
+{
+	int height = fieldAdress / NumberWidths;
+	return Heights[height];
+}
+
+int eulerianField::fieldSize()
+{
+	return NumberHeights * NumberWidths;
+}

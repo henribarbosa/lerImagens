@@ -23,7 +23,6 @@ void interface(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, int& interfacePos
 
 void interfaceNonPerpendicular(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, cv::Point& leftInterface, cv::Point& rightInterface);
 
-void interfaceMixing(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, cv::Point& leftInterface, cv::Point& rightInterface);
 
 
 

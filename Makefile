@@ -339,6 +339,33 @@ src/lerImagem.cpp.s:
 	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/lerImagem.cpp.s
 .PHONY : src/lerImagem.cpp.s
 
+src/mixing.o: src/mixing.cpp.o
+
+.PHONY : src/mixing.o
+
+# target to build an object file
+src/mixing.cpp.o:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/mixing.cpp.o
+.PHONY : src/mixing.cpp.o
+
+src/mixing.i: src/mixing.cpp.i
+
+.PHONY : src/mixing.i
+
+# target to preprocess a source file
+src/mixing.cpp.i:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/mixing.cpp.i
+.PHONY : src/mixing.cpp.i
+
+src/mixing.s: src/mixing.cpp.s
+
+.PHONY : src/mixing.s
+
+# target to generate assembly for a file
+src/mixing.cpp.s:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/mixing.cpp.s
+.PHONY : src/mixing.cpp.s
+
 src/preProcess.o: src/preProcess.cpp.o
 
 .PHONY : src/preProcess.o
@@ -426,6 +453,9 @@ help:
 	@echo "... src/lerImagem.o"
 	@echo "... src/lerImagem.i"
 	@echo "... src/lerImagem.s"
+	@echo "... src/mixing.o"
+	@echo "... src/mixing.i"
+	@echo "... src/mixing.s"
 	@echo "... src/preProcess.o"
 	@echo "... src/preProcess.i"
 	@echo "... src/preProcess.s"

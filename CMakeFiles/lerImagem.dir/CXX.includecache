@@ -1244,6 +1244,32 @@ eulerianField.h
 read_control.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
 
+/home/user/Área de Trabalho/Teste/lerImagem/include/mixing.h
+read_control.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
+eulerianField.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/eulerianField.h
+circles_data.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/circles_data.h
+opencv2/core/core.hpp
+-
+opencv2/imgcodecs.hpp
+-
+opencv2/highgui/highgui.hpp
+-
+opencv2/opencv.hpp
+-
+opencv2/highgui.hpp
+/home/user/Área de Trabalho/Teste/lerImagem/include/opencv2/highgui.hpp
+opencv2/imgproc.hpp
+/home/user/Área de Trabalho/Teste/lerImagem/include/opencv2/imgproc.hpp
+iostream
+-
+fstream
+-
+vector
+-
+
 /home/user/Área de Trabalho/Teste/lerImagem/include/preProcess.h
 vector
 -
@@ -1325,10 +1351,16 @@ tclap/CmdLine.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/preProcess.h
 ../include/read_control.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
+../include/mixing.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/mixing.h
 filesystem
 -
 glob.h
 -
+
+/home/user/Área de Trabalho/Teste/lerImagem/src/mixing.cpp
+../include/mixing.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/mixing.h
 
 /home/user/Área de Trabalho/Teste/lerImagem/src/preProcess.cpp
 opencv2/opencv.hpp

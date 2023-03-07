@@ -9,6 +9,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/lerImagem.dir/src/circles_data.cpp.o"
   "CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o"
   "CMakeFiles/lerImagem.dir/src/read_control.cpp.o"
+  "CMakeFiles/lerImagem.dir/src/mixing.cpp.o"
   "lerImagem.pdb"
   "lerImagem"
 )
