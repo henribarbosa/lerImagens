@@ -813,7 +813,7 @@ void lagrangian::makeFigureNew(cv::Mat* exibir, circles_data& point, int& label)
 
 void lagrangian::makeFigureUpdate(cv::Mat* exibir, circles_data& point, circles_data& pastPoint, int& label)
 {
-	std::cout << pastPoint.x << " , " << pastPoint.y << " -> " << point.x << " , " << point.y << std::endl;
+//	std::cout << pastPoint.x << " , " << pastPoint.y << " -> " << point.x << " , " << point.y << std::endl;
 	cv::arrowedLine(*exibir, cv::Point(pastPoint.x,pastPoint.y), cv::Point(point.x, point.y), cv::Scalar(0,255,255));
 //	cv::circle(*exibir, cv::Point(point.x, point.y), 5, cv::Scalar(0,255,0), 0.1, 8);
 	//cv::putText(*exibir, std::to_string(label), cv::Point(point.x, point.y), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0,255,0));

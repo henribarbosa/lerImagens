@@ -394,11 +394,6 @@ void auction::run(cv::Mat* exibir, lagrangian& particle_track)
 		#ifdef DEBUG_MODE
 		std::cout << "Status: " << status << " , Correspondence ratio: " <<  correspondenceRatio(lines_assignment, connections_lines) << std::endl;
 		#endif
-//		for (int i = 0; i < connections_lines; i++)
-//		{
-//			std::cout << lines_assignment[i] << " ";
-//		}
-		std::cout << std::endl;
 		particle_track.updateLabels(exibir, frame1, frame0, lines_assignment, connections_lines);
 		//makeFigure(exibir);
 		clearMemory();
