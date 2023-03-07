@@ -1,0 +1,3 @@
+/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/rebuild_cache.dir
+/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir
+/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/edit_cache.dir
