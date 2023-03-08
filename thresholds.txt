@@ -24,8 +24,11 @@ MinimumPlugHeight : 20
 # Threshold to find different particle in the interface (midle value between ligther and darker particles)
 InterfaceNonPerpendicularThreshold : 125
 
-# Minimum mixing value to find interface
-MinMixing : 0.1
+# Step to find interface
+MixingStep : 45
+
+# Minimum particle count to look for interface
+MinParticleCount : 5
 
 # Priority of particles in the interface search
 HoughBalanceParticles : 100
