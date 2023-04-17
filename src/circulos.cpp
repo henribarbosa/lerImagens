@@ -261,15 +261,15 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 					if (not foundOverlap)
 					{
 						int sum = 0;
-						for (int i = -1; i <= 1; i++)
+						for (int i = -2; i <= 2; i++)
 						{
 							sum = sum + (int)figure.at<uchar>(position[0] + i,position[1]);
 						}
-						for (int i = -1; i <= 1; i++)
+						for (int i = -2; i <= 2; i++)
 						{
 							sum = sum + (int)figure.at<uchar>(position[0],position[1] + 1);
 						}
-						float avg = (float)sum / 6.0;
+						float avg = (float)sum / 10.0;
 						int type = 1;
 						if (avg > typeThreshold) 
 						{

@@ -10,6 +10,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o"
   "CMakeFiles/lerImagem.dir/src/read_control.cpp.o"
   "CMakeFiles/lerImagem.dir/src/mixing.cpp.o"
+  "CMakeFiles/lerImagem.dir/src/simulation.cpp.o"
+  "CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o"
   "lerImagem.pdb"
   "lerImagem"
 )

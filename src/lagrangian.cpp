@@ -50,6 +50,8 @@ void lagrangian::startFields()
 	Temperature = eulerianFieldGranularTemp(20,2,bottom*scale,bedWidth,"GranularTemperature");
 	VelocityX = eulerianField(50,5,bottom*scale,bedWidth,"VelocityX");
 	VelocityY = eulerianField(50,5,bottom*scale,bedWidth,"VelocityY");
+	massFluxX = eulerianField(50,5,bottom*scale,bedWidth,"massFluxX");
+	massFluxY = eulerianField(50,5,bottom*scale,bedWidth,"massFluxY");
 }
 
 void lagrangian::createFile()
@@ -510,6 +512,8 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 			Temperature.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale, -1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale, (bottom-points[i].x)*scale, (left-points[i].y)*scale);
 			VelocityX.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			VelocityY.addParticle(-1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+			massFluxX.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+			massFluxY.addParticle(-1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			
 			usedlabels[lines_assignment[i]] = true;
 		}
@@ -562,6 +566,8 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 					Temperature.addParticle(-1*(points[i].y - pastPoints[possiblePointsPositions[j]].y)*scale, -1*(points[i].x - pastPoints[possiblePointsPositions[j]].x)*scale, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
 					VelocityX.addParticle(-1*(points[i].y - pastPoints[possiblePointsPositions[j]].y)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 					VelocityY.addParticle(-1*(points[i].x - pastPoints[possiblePointsPositions[j]].x)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+					massFluxX.addParticle(-1*(points[i].y - pastPoints[possiblePointsPositions[j]].y)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+					massFluxY.addParticle(-1*(points[i].x - pastPoints[possiblePointsPositions[j]].x)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 
 					foundCorrespondent = true;
 					usedlabels[j] = true;
@@ -636,6 +642,8 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 						Temperature.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, -1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
 						VelocityX.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 						VelocityY.addParticle(-1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+						massFluxX.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, (bottom - points[i].x)*scale*M_PI*25, (left - points[i].y)*scale);
+						massFluxY.addParticle(-1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale*M_PI*25, (left - points[i].y)*scale);
 
 						foundCorrespondent = true;
 						for (int k = 0; k < labels.size(); k++)
@@ -699,6 +707,8 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	VelocityX.writeFrame(frame);
 	VelocityY.consolidateField();
 	VelocityY.writeFrame(frame);
+	massFluxX.writeFrame(frame);
+	massFluxY.writeFrame(frame);
 
 	labels = new_labels;
 	possiblePointsPositions = possiblePointsPositionNew;
@@ -814,7 +824,7 @@ void lagrangian::makeFigureNew(cv::Mat* exibir, circles_data& point, int& label)
 void lagrangian::makeFigureUpdate(cv::Mat* exibir, circles_data& point, circles_data& pastPoint, int& label)
 {
 //	std::cout << pastPoint.x << " , " << pastPoint.y << " -> " << point.x << " , " << point.y << std::endl;
-	cv::arrowedLine(*exibir, cv::Point(pastPoint.x,pastPoint.y), cv::Point(point.x, point.y), cv::Scalar(0,255,255));
+	cv::arrowedLine(*exibir, cv::Point(pastPoint.x,pastPoint.y), cv::Point(point.x, point.y), cv::Scalar(255,0,255));
 //	cv::circle(*exibir, cv::Point(point.x, point.y), 5, cv::Scalar(0,255,0), 0.1, 8);
 	//cv::putText(*exibir, std::to_string(label), cv::Point(point.x, point.y), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0,255,0));
 }

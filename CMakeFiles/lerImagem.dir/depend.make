@@ -357,6 +357,9 @@ CMakeFiles/lerImagem.dir/src/circulos.cpp.o: src/circulos.cpp
 CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o: include/eulerianField.h
 CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o: src/eulerianField.cpp
 
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o: include/eulerianFieldSimulation.h
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o: src/eulerianFieldSimulation.cpp
+
 CMakeFiles/lerImagem.dir/src/hough.cpp.o: /home/user/opencv/build/cv_cpu_config.h
 CMakeFiles/lerImagem.dir/src/hough.cpp.o: /home/user/opencv/build/cvconfig.h
 CMakeFiles/lerImagem.dir/src/hough.cpp.o: /home/user/opencv/build/opencv2/opencv_modules.hpp
@@ -705,11 +708,13 @@ CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/auction.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/circles_data.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/circulos.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/eulerianField.h
+CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/eulerianFieldSimulation.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/hough.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/lagrangian.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/mixing.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/preProcess.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/read_control.h
+CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: include/simulation.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: src/lerImagem.cpp
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: src/tclap/Arg.h
 CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o: src/tclap/ArgContainer.h
@@ -968,4 +973,9 @@ CMakeFiles/lerImagem.dir/src/preProcess.cpp.o: src/preProcess.cpp
 
 CMakeFiles/lerImagem.dir/src/read_control.cpp.o: include/read_control.h
 CMakeFiles/lerImagem.dir/src/read_control.cpp.o: src/read_control.cpp
+
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o: include/eulerianFieldSimulation.h
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o: include/read_control.h
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o: include/simulation.h
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o: src/simulation.cpp
 

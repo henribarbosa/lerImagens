@@ -1168,6 +1168,18 @@ vector
 cmath
 -
 
+/home/user/Área de Trabalho/Teste/lerImagem/include/eulerianFieldSimulation.h
+iostream
+-
+fstream
+-
+string
+-
+vector
+-
+cmath
+-
+
 /home/user/Área de Trabalho/Teste/lerImagem/include/hough.h
 opencv2/core/core.hpp
 -
@@ -1292,6 +1304,26 @@ cmath
 iostream
 -
 
+/home/user/Área de Trabalho/Teste/lerImagem/include/simulation.h
+vector
+-
+iostream
+-
+fstream
+-
+cmath
+-
+string
+-
+sstream
+-
+algorithm
+-
+read_control.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
+eulerianFieldSimulation.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/eulerianFieldSimulation.h
+
 /home/user/Área de Trabalho/Teste/lerImagem/src/altura.cpp
 ../include/altura.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/altura.h
@@ -1311,6 +1343,10 @@ iostream
 /home/user/Área de Trabalho/Teste/lerImagem/src/eulerianField.cpp
 ../include/eulerianField.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/eulerianField.h
+
+/home/user/Área de Trabalho/Teste/lerImagem/src/eulerianFieldSimulation.cpp
+../include/eulerianFieldSimulation.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/eulerianFieldSimulation.h
 
 /home/user/Área de Trabalho/Teste/lerImagem/src/hough.cpp
 ../include/hough.h
@@ -1353,6 +1389,8 @@ tclap/CmdLine.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
 ../include/mixing.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/mixing.h
+../include/simulation.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/simulation.h
 filesystem
 -
 glob.h
@@ -1373,6 +1411,10 @@ regex
 /home/user/Área de Trabalho/Teste/lerImagem/src/read_control.cpp
 ../include/read_control.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
+
+/home/user/Área de Trabalho/Teste/lerImagem/src/simulation.cpp
+../include/simulation.h
+/home/user/Área de Trabalho/Teste/lerImagem/include/simulation.h
 
 /home/user/Área de Trabalho/Teste/lerImagem/src/tclap/Arg.h
 TCLAPConfig.h

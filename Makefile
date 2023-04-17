@@ -258,6 +258,33 @@ src/eulerianField.cpp.s:
 	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/eulerianField.cpp.s
 .PHONY : src/eulerianField.cpp.s
 
+src/eulerianFieldSimulation.o: src/eulerianFieldSimulation.cpp.o
+
+.PHONY : src/eulerianFieldSimulation.o
+
+# target to build an object file
+src/eulerianFieldSimulation.cpp.o:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o
+.PHONY : src/eulerianFieldSimulation.cpp.o
+
+src/eulerianFieldSimulation.i: src/eulerianFieldSimulation.cpp.i
+
+.PHONY : src/eulerianFieldSimulation.i
+
+# target to preprocess a source file
+src/eulerianFieldSimulation.cpp.i:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.i
+.PHONY : src/eulerianFieldSimulation.cpp.i
+
+src/eulerianFieldSimulation.s: src/eulerianFieldSimulation.cpp.s
+
+.PHONY : src/eulerianFieldSimulation.s
+
+# target to generate assembly for a file
+src/eulerianFieldSimulation.cpp.s:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.s
+.PHONY : src/eulerianFieldSimulation.cpp.s
+
 src/hough.o: src/hough.cpp.o
 
 .PHONY : src/hough.o
@@ -420,6 +447,33 @@ src/read_control.cpp.s:
 	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/read_control.cpp.s
 .PHONY : src/read_control.cpp.s
 
+src/simulation.o: src/simulation.cpp.o
+
+.PHONY : src/simulation.o
+
+# target to build an object file
+src/simulation.cpp.o:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/simulation.cpp.o
+.PHONY : src/simulation.cpp.o
+
+src/simulation.i: src/simulation.cpp.i
+
+.PHONY : src/simulation.i
+
+# target to preprocess a source file
+src/simulation.cpp.i:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/simulation.cpp.i
+.PHONY : src/simulation.cpp.i
+
+src/simulation.s: src/simulation.cpp.s
+
+.PHONY : src/simulation.s
+
+# target to generate assembly for a file
+src/simulation.cpp.s:
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/simulation.cpp.s
+.PHONY : src/simulation.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -444,6 +498,9 @@ help:
 	@echo "... src/eulerianField.o"
 	@echo "... src/eulerianField.i"
 	@echo "... src/eulerianField.s"
+	@echo "... src/eulerianFieldSimulation.o"
+	@echo "... src/eulerianFieldSimulation.i"
+	@echo "... src/eulerianFieldSimulation.s"
 	@echo "... src/hough.o"
 	@echo "... src/hough.i"
 	@echo "... src/hough.s"
@@ -462,6 +519,9 @@ help:
 	@echo "... src/read_control.o"
 	@echo "... src/read_control.i"
 	@echo "... src/read_control.s"
+	@echo "... src/simulation.o"
+	@echo "... src/simulation.i"
+	@echo "... src/simulation.s"
 .PHONY : help
 
 

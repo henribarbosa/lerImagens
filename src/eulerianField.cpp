@@ -105,8 +105,15 @@ void eulerianField::writeFrame(int FrameNumber)
 	file.open("Files/"+FieldName+".txt", std::ios::out | std::ios::app);
 
 	file << FrameNumber << " :";
-	for (long double* value = Field; value != Field + NumberHeights*NumberWidths; ++value)
-		file << " " << *value;
+	for (int i = 0; i < NumberHeights*NumberWidths; i++)
+	{
+		if (numberPoints[i] == 0)
+			file <<	" NaN";
+		else
+			file << " " << Field[i];
+	}
+//	for (long double* value = Field; value != Field + NumberHeights*NumberWidths; ++value)
+//		file << " " << *value;
 	file << std::endl;
 
 	file.close();
@@ -277,8 +284,15 @@ void eulerianFieldGranularTemp::writeFrame(int FrameNumber)
 	file.open("Files/"+FieldName+".txt", std::ios::out | std::ios::app);
 
 	file << FrameNumber << " :";
-	for (long double* value = Temperature; value != Temperature + NumberHeights*NumberWidths; ++value)
-		file << " " << *value;
+//	for (long double* value = Temperature; value != Temperature + NumberHeights*NumberWidths; ++value)
+//		file << " " << *value;
+	for (int i = 0; i < NumberHeights*NumberWidths; i++)
+	{
+		if ( numberPoints[i] == 0 )
+			file <<	" NaN";
+		else
+			file << " " << Temperature[i];
+	}
 	file << std::endl;
 
 	file.close();
@@ -288,7 +302,7 @@ void eulerianFieldGranularTemp::writeFrame(int FrameNumber)
 
 void eulerianFieldGranularTemp::addParticle(float u, float v, float x, float y)
 {
-	int heightIndex = 1, widthIndex = 1;
+	int heightIndex = 0, widthIndex = 0;
 	
 	for (; heightIndex < NumberHeights; ++heightIndex)
 	{

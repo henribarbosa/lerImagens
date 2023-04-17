@@ -357,6 +357,9 @@ CMakeFiles/lerImagem.dir/src/circulos.cpp.o
 CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o
  /home/user/Área de Trabalho/Teste/lerImagem/include/eulerianField.h
  /home/user/Área de Trabalho/Teste/lerImagem/src/eulerianField.cpp
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o
+ /home/user/Área de Trabalho/Teste/lerImagem/include/eulerianFieldSimulation.h
+ /home/user/Área de Trabalho/Teste/lerImagem/src/eulerianFieldSimulation.cpp
 CMakeFiles/lerImagem.dir/src/hough.cpp.o
  /home/user/opencv/build/cv_cpu_config.h
  /home/user/opencv/build/cvconfig.h
@@ -706,11 +709,13 @@ CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o
  /home/user/Área de Trabalho/Teste/lerImagem/include/circles_data.h
  /home/user/Área de Trabalho/Teste/lerImagem/include/circulos.h
  /home/user/Área de Trabalho/Teste/lerImagem/include/eulerianField.h
+ /home/user/Área de Trabalho/Teste/lerImagem/include/eulerianFieldSimulation.h
  /home/user/Área de Trabalho/Teste/lerImagem/include/hough.h
  /home/user/Área de Trabalho/Teste/lerImagem/include/lagrangian.h
  /home/user/Área de Trabalho/Teste/lerImagem/include/mixing.h
  /home/user/Área de Trabalho/Teste/lerImagem/include/preProcess.h
  /home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
+ /home/user/Área de Trabalho/Teste/lerImagem/include/simulation.h
  /home/user/Área de Trabalho/Teste/lerImagem/src/lerImagem.cpp
  /home/user/Área de Trabalho/Teste/lerImagem/src/tclap/Arg.h
  /home/user/Área de Trabalho/Teste/lerImagem/src/tclap/ArgContainer.h
@@ -969,3 +974,8 @@ CMakeFiles/lerImagem.dir/src/preProcess.cpp.o
 CMakeFiles/lerImagem.dir/src/read_control.cpp.o
  /home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
  /home/user/Área de Trabalho/Teste/lerImagem/src/read_control.cpp
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o
+ /home/user/Área de Trabalho/Teste/lerImagem/include/eulerianFieldSimulation.h
+ /home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
+ /home/user/Área de Trabalho/Teste/lerImagem/include/simulation.h
+ /home/user/Área de Trabalho/Teste/lerImagem/src/simulation.cpp

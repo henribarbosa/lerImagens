@@ -46,7 +46,7 @@ private:
 	float scale;
 	int bottom = 0, left = 0;
 
-	eulerianField VelocityX, VelocityY;
+	eulerianField VelocityX, VelocityY, massFluxX, massFluxY;
 	eulerianFieldGranularTemp Temperature;
 	
 	void createFile();

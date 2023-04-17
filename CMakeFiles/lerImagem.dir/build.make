@@ -321,6 +321,54 @@ CMakeFiles/lerImagem.dir/src/mixing.cpp.o.provides: CMakeFiles/lerImagem.dir/src
 CMakeFiles/lerImagem.dir/src/mixing.cpp.o.provides.build: CMakeFiles/lerImagem.dir/src/mixing.cpp.o
 
 
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o: CMakeFiles/lerImagem.dir/flags.make
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o: src/simulation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/lerImagem.dir/src/simulation.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/lerImagem.dir/src/simulation.cpp.o -c "/home/user/Área de Trabalho/Teste/lerImagem/src/simulation.cpp"
+
+CMakeFiles/lerImagem.dir/src/simulation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/lerImagem.dir/src/simulation.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/user/Área de Trabalho/Teste/lerImagem/src/simulation.cpp" > CMakeFiles/lerImagem.dir/src/simulation.cpp.i
+
+CMakeFiles/lerImagem.dir/src/simulation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/lerImagem.dir/src/simulation.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/user/Área de Trabalho/Teste/lerImagem/src/simulation.cpp" -o CMakeFiles/lerImagem.dir/src/simulation.cpp.s
+
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o.requires:
+
+.PHONY : CMakeFiles/lerImagem.dir/src/simulation.cpp.o.requires
+
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o.provides: CMakeFiles/lerImagem.dir/src/simulation.cpp.o.requires
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/simulation.cpp.o.provides.build
+.PHONY : CMakeFiles/lerImagem.dir/src/simulation.cpp.o.provides
+
+CMakeFiles/lerImagem.dir/src/simulation.cpp.o.provides.build: CMakeFiles/lerImagem.dir/src/simulation.cpp.o
+
+
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o: CMakeFiles/lerImagem.dir/flags.make
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o: src/eulerianFieldSimulation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o -c "/home/user/Área de Trabalho/Teste/lerImagem/src/eulerianFieldSimulation.cpp"
+
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/user/Área de Trabalho/Teste/lerImagem/src/eulerianFieldSimulation.cpp" > CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.i
+
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/user/Área de Trabalho/Teste/lerImagem/src/eulerianFieldSimulation.cpp" -o CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.s
+
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.requires:
+
+.PHONY : CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.requires
+
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.provides: CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.requires
+	$(MAKE) -f CMakeFiles/lerImagem.dir/build.make CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.provides.build
+.PHONY : CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.provides
+
+CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.provides.build: CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o
+
+
 # Object files for target lerImagem
 lerImagem_OBJECTS = \
 "CMakeFiles/lerImagem.dir/src/altura.cpp.o" \
@@ -333,7 +381,9 @@ lerImagem_OBJECTS = \
 "CMakeFiles/lerImagem.dir/src/circles_data.cpp.o" \
 "CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o" \
 "CMakeFiles/lerImagem.dir/src/read_control.cpp.o" \
-"CMakeFiles/lerImagem.dir/src/mixing.cpp.o"
+"CMakeFiles/lerImagem.dir/src/mixing.cpp.o" \
+"CMakeFiles/lerImagem.dir/src/simulation.cpp.o" \
+"CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o"
 
 # External object files for target lerImagem
 lerImagem_EXTERNAL_OBJECTS =
@@ -349,6 +399,8 @@ lerImagem: CMakeFiles/lerImagem.dir/src/circles_data.cpp.o
 lerImagem: CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o
 lerImagem: CMakeFiles/lerImagem.dir/src/read_control.cpp.o
 lerImagem: CMakeFiles/lerImagem.dir/src/mixing.cpp.o
+lerImagem: CMakeFiles/lerImagem.dir/src/simulation.cpp.o
+lerImagem: CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o
 lerImagem: CMakeFiles/lerImagem.dir/build.make
 lerImagem: /home/user/opencv/build/lib/libopencv_gapi.so.4.7.0
 lerImagem: /home/user/opencv/build/lib/libopencv_highgui.so.4.7.0
@@ -366,7 +418,7 @@ lerImagem: /home/user/opencv/build/lib/libopencv_flann.so.4.7.0
 lerImagem: /home/user/opencv/build/lib/libopencv_imgproc.so.4.7.0
 lerImagem: /home/user/opencv/build/lib/libopencv_core.so.4.7.0
 lerImagem: CMakeFiles/lerImagem.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable lerImagem"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable lerImagem"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/lerImagem.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -385,6 +437,8 @@ CMakeFiles/lerImagem.dir/requires: CMakeFiles/lerImagem.dir/src/circles_data.cpp
 CMakeFiles/lerImagem.dir/requires: CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o.requires
 CMakeFiles/lerImagem.dir/requires: CMakeFiles/lerImagem.dir/src/read_control.cpp.o.requires
 CMakeFiles/lerImagem.dir/requires: CMakeFiles/lerImagem.dir/src/mixing.cpp.o.requires
+CMakeFiles/lerImagem.dir/requires: CMakeFiles/lerImagem.dir/src/simulation.cpp.o.requires
+CMakeFiles/lerImagem.dir/requires: CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.requires
 
 .PHONY : CMakeFiles/lerImagem.dir/requires
 

@@ -15,6 +15,7 @@
 #include "../include/preProcess.h"
 #include "../include/read_control.h"
 #include "../include/mixing.h"
+#include "../include/simulation.h"
 
 
 #if defined _WIN32
@@ -48,6 +49,19 @@ std::vector<std::string> globVector(const std::string& pattern){
     return files;
 }
 #endif
+
+int SimulationProcess(std::string FramesPath, std::string Method, bool bidisperse)
+{
+	std::vector<std::string> files = globVector(FramesPath);
+	
+	Simulation_data simulation;
+
+	for (std::string file : files)
+	{
+		simulation.readFile(file, Method, bidisperse);
+	}
+
+}
 
 int PreProcessing(std::string Method, std::string CalibrationPath, std::string ImagesPath)
 {
@@ -278,7 +292,22 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 			cv::imshow("detected circles", exibirCircles);
 			cv::imshow("circles path", exibirTrajectories);
 			cv::waitKey(1);
+
+			int barWidth = 40;
+			float progress = ((float)i / (float)(files.size()-1));
+
+			std::cout << "[";
+			int pos = int(barWidth * progress);
+//			std::cout << progress << " " << pos << std::endl;
+			for (int j = 0; j < barWidth; ++j) {
+				if (j < pos) std::cout << "=";
+				else if (j == pos) std::cout << ">";
+				else std::cout << " ";
+			}
+			std::cout << "] " << int(progress * 100.0) << " %\r";
+			std::cout.flush();
 		}
+		std::cout << std::endl;
 	}
 
 	//particle_track.mergeFiles();
@@ -333,7 +362,7 @@ int main(int argc, char** argv)
 		cmd.add(PostProcessFilesFolder);
 
 		// Execution mode
-		TCLAP::ValueArg<std::string> ExecutionMode("m", "mode", "Execution [m]ode: pre, process or post", true, "process", "string");
+		TCLAP::ValueArg<std::string> ExecutionMode("m", "mode", "Execution [m]ode: simulation, pre, process or post", true, "process", "string");
 		cmd.add(ExecutionMode);
 
 		// Methods called to process
@@ -372,8 +401,13 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
+	// Processing simulations
+	if (Mode == "simulation")
+	{
+		int ok = SimulationProcess(ImagesPath, RunMethod, bidisperse);
+	}
 	// Pre-processing
-	if (Mode == "pre")
+	else if (Mode == "pre")
 	{
 		int ok = PreProcessing(PreMethod, CalibrationPath, ImagesPath);
 	}
