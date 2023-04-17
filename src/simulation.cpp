@@ -4,7 +4,8 @@ Simulation_data::Simulation_data()
 //	:frame(0),height(0),points(nullptr)
 {
 	newFile("Expansion");
-	newFile("Plugs");
+//	newFile("Plugs");
+//	newFile("Particle fraction");
 
 	control diamControl("thresholds.txt","SimulationDiameter");
 	tube_diameter = diamControl.returnThreshold();
@@ -16,6 +17,7 @@ Simulation_data::Simulation_data()
 	ParticleNumber1 = eulerianFieldSimulation(50,3,tube_height,tube_diameter,"Particles1");
 	ParticleNumber2 = eulerianFieldSimulation(50,3,tube_height,tube_diameter,"Particles2");
 	GranularTemperature = eulerianFieldGranularTempSimulation(30,3,tube_height,tube_diameter,"GranularTemperature");
+	ParticleFraction = eulerianFieldPartFracSimulation(50,1,tube_height,tube_diameter,"PartcleFraction");
 }
 
 void Simulation_data::readFile(std::string filePath, std::string method, bool bidisperse)
@@ -38,7 +40,7 @@ void Simulation_data::readFile(std::string filePath, std::string method, bool bi
 	std::getline(file, line); // number atoms
 	atomsNumber = std::stoi(line);
 
-	points = new float[4*atomsNumber];
+//	points = new float[4*atomsNumber];
 
 	std::getline(file, line); // bounding box label
 	std::getline(file, line); // ... x
@@ -53,10 +55,10 @@ void Simulation_data::readFile(std::string filePath, std::string method, bool bi
 
 //		std::cout << z << std::endl;
 
-		points[4*i] = x;
-		points[4*i+1] = y;
-		points[4*i+2] = z;
-		points[4*i+3] = radius;
+//		points[4*i] = x;
+//		points[4*i+1] = y;
+//		points[4*i+2] = z;
+//		points[4*i+3] = radius;
 
 		if (z + radius > height)
 			height = z + radius;
@@ -68,6 +70,7 @@ void Simulation_data::readFile(std::string filePath, std::string method, bool bi
 		VelocityY.addParticle(u2,x,y,z);
 		VelocityZ.addParticle(u3,x,y,z);
 		GranularTemperature.addParticle(u1,u2,u3,x,y,z);
+		ParticleFraction.addParticleFraction(radius,x,y,z);
 
 		if (method == "temperature")
 			continue;
@@ -84,7 +87,7 @@ void Simulation_data::readFile(std::string filePath, std::string method, bool bi
 
 	file.close();
 
-	findPlugs();
+//	findPlugs();
 
 	std::stringstream writeLine;
 
@@ -92,7 +95,7 @@ void Simulation_data::readFile(std::string filePath, std::string method, bool bi
 	appendToFile("Expansion", writeLine.str());
 	writeLine.clear();
 
-	delete[] points;
+//	delete[] points;
 
 	if (method == "expansion")
 		return;
@@ -128,6 +131,8 @@ void Simulation_data::appendToFile(std::string fileName, std::string line)
 void Simulation_data::findPlugs()
 {
 	plugsVector.clear();
+	std::stringstream writeLine;
+	writeLine << frame << " : ";
 
 	control plug_threshold("thresholds.txt","SimulationPlugThreshold");
 	float threshold = plug_threshold.returnThreshold();
@@ -135,7 +140,7 @@ void Simulation_data::findPlugs()
 	bool inPlug = false;
 	std::pair<float,float> currentPlug;
 
-	for (float h = 0; h < height; h += 0.00025)
+	for (float h = 0; h < height; h += 0.0001)
 	{
 		float sum_area = 0;
 		for (int i = 0; i < atomsNumber; i++)
@@ -150,7 +155,8 @@ void Simulation_data::findPlugs()
 			sum_area += area;
 		}
 		sum_area = sum_area / (M_PI * pow(tube_diameter/2,2));
-		std::cout << h << " : " << sum_area << std::endl;
+		writeLine << sum_area << " ";
+//		std::cout << h << " : " << sum_area << std::endl;
 		if (sum_area >= threshold)
 		{
 			if (not inPlug)
@@ -169,16 +175,15 @@ void Simulation_data::findPlugs()
 			}
 		}
 	}
+	appendToFile("Particle fraction", writeLine.str());
 
-	std::stringstream writeLine;
-
+	writeLine.clear();
 	writeLine << frame << " : ";
 	for (auto eachPlug : plugsVector)
 	{
 		writeLine << eachPlug.first << " " << eachPlug.second << " ";
 	}
 	appendToFile("Plugs", writeLine.str());
-	writeLine.clear();
 
 }
 

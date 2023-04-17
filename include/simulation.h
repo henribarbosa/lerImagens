@@ -31,6 +31,7 @@ public:
 	eulerianFieldSimulation ParticleNumber1;
 	eulerianFieldSimulation ParticleNumber2;
 	eulerianFieldGranularTempSimulation GranularTemperature;
+	eulerianFieldPartFracSimulation ParticleFraction;
 
 	void readFile(std::string file, std::string method, bool bidisperse);
 	void newFile(std::string name);

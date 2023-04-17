@@ -2,13 +2,14 @@
 
 #include <iostream>
 #include <fstream>
+#include <pthread.h>
 #include <string>
 #include <vector>
 #include <cmath>
 
 class eulerianFieldSimulation
 {
-private:
+public:
 	int NumberHeights, NumberWidths, NumberCells;
 	float Height, Width;
 	int* numberPoints = nullptr;
@@ -19,7 +20,6 @@ private:
 	void newFile();
 	void resetField();
 
-public:
 	long double* Field = nullptr;
 
 	eulerianFieldSimulation(int NumberHeights, int NumberWidths, float Height, float Width, const char* fieldName);
@@ -70,4 +70,14 @@ public:
 	void addParticle(float u, float v, float w, float x, float y, float z);
 	void consolidateField();
 	void writeFrame(int frameNumber);
+};
+
+class eulerianFieldPartFracSimulation : public eulerianFieldSimulation
+{
+public:
+	eulerianFieldPartFracSimulation()
+	{ eulerianFieldSimulation(); }
+	eulerianFieldPartFracSimulation(int NumberHeightsI, int NumberWidthsI, float HeightI, float WidthI, const char* fieldNameI)
+	{ eulerianFieldSimulation(NumberHeightsI, NumberWidthsI, HeightI, WidthI, fieldNameI); }
+	void addParticleFraction(float r, float x, float y, float z);
 };
