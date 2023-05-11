@@ -3,6 +3,11 @@
 
 void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>& rectangles)
 {
+	// adjust bed to not consider borders, too much errors
+	bed.y = bed.y + 5;
+	bed.height = bed.height - 10;
+	bed.width = bed.width - 5;
+
 	cv::Mat figure = (*image)(bed);
 
 	cv::GaussianBlur(figure,figure,cv::Size(5,5),0);
@@ -34,8 +39,11 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 	control CirclesThreshold("thresholds.txt","CirclesThreshols");
 	cv::threshold(figure,filter,CirclesThreshold.returnThreshold(),250,0);
 
-	control typeIdentifier("thresholds.txt", "InterfaceNonPerpendicularThreshold");
-	float typeThreshold = typeIdentifier.returnThreshold();
+	control typeIdentifier("thresholds.txt", "LowerThreshold");
+	float lowerTypeThreshold = typeIdentifier.returnThreshold();
+
+	control typeIdentifier2("thresholds.txt", "UpperThreshold");
+	float upperTypeThreshold = typeIdentifier2.returnThreshold();
 
 	control CircleMinimumThreshold("thresholds.txt","CircleMinimumValueThreshold");
 	uchar threshold = CircleMinimumThreshold.returnThreshold();
@@ -55,7 +63,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 	std::mutex circlesLock;
 
 	LocalMaxima.forEach<uchar>(
-		[&figure, &LocalMinima, &circlesVector, &circlesLock, &filter, &typeThreshold, &threshold](uchar& pixel, const int* position)
+		[&figure, &LocalMinima, &circlesVector, &circlesLock, &filter, &lowerTypeThreshold, &upperTypeThreshold, &threshold](uchar& pixel, const int* position)
 		{
 			if (pixel > 0)
 			{
@@ -261,22 +269,26 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 					if (not foundOverlap)
 					{
 						int sum = 0;
-						for (int i = -2; i <= 2; i++)
+						for (int i = -1; i <= 1; i++)
 						{
 							sum = sum + (int)figure.at<uchar>(position[0] + i,position[1]);
 						}
-						for (int i = -2; i <= 2; i++)
+						for (int i = -1; i <= 1; i++)
 						{
 							sum = sum + (int)figure.at<uchar>(position[0],position[1] + 1);
 						}
-						float avg = (float)sum / 10.0;
-						int type = 1;
-						if (avg > typeThreshold) 
+						float avg = (float)sum / 6.0;
+						int type = 0;
+						if (avg < lowerTypeThreshold)
+						{
+							type = 1;
+						}
+						else if (avg > upperTypeThreshold) 
 						{
 							type = 2;
 						}
 
-						circlesVector.push_back(circles_data(position[1],position[0],radius,false,type));
+						circlesVector.push_back(circles_data(position[1],position[0],radius,false,avg,type));
 						//cv::circle(figure,cv::Point(position[1],position[0]),radius,cv::Scalar(127,0,0));
 					}
 				}
@@ -336,10 +348,25 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 			}
 		}
 
+		if (circlesVector[i].type == 0)
+		{
+			int type1Bin = 0;
+			int type2Bin = 0;
+			for (auto circle : circlesVector)
+			{
+				if (circle.dist(circle,circlesVector[i]) < 15)
+				{
+					if (circle.type == 1) { type1Bin++;}
+					else if (circle.type == 2) { type2Bin++;}
+				}
+			}
+			circlesVector[i].type = (type1Bin >= type2Bin) ? 1 : 2;
+		}
+
 		if (circlesVector[i].type == 1) {
 			cv::circle(*exibir, cv::Point(circlesVector[i].x,circlesVector[i].y), circlesVector[i].r, cv::Scalar(255,0,255), 1, cv::LINE_AA);
 		}
-		else {
+		else if (circlesVector[i].type == 2) {
 			cv::circle(*exibir, cv::Point(circlesVector[i].x,circlesVector[i].y), circlesVector[i].r, cv::Scalar(0,255,255), 1, cv::LINE_AA);
 		}
 	}
@@ -349,7 +376,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 	file << circlesVector.size() << " circulos" << std::endl;
 	for (int i=0; i < circlesVector.size(); i++)
 	{
-		file << circlesVector[i].x << " " << circlesVector[i].y << " " << circlesVector[i].r << " " << circlesVector[i].inPlug << " " << circlesVector[i].type << std::endl;
+		file << circlesVector[i].x << " " << circlesVector[i].y << " " << circlesVector[i].r << " " << circlesVector[i].inPlug << " " << circlesVector[i].brightness << " " << circlesVector[i].type << std::endl;
 	}
 	file.close();
 }
@@ -406,7 +433,42 @@ void generalMoviment(cv::Mat* image, cv::Mat* exibir, cv::Rect* bed, std::vector
 	}
 }
 
+cv::Mat quantizeImage(cv::Mat* image, int quantizationColors)
+{
+	cv::Mat src = image->clone();  //cloning mat data
+	cv::Mat data = cv::Mat::zeros(src.cols * src.rows, 3, CV_32F);  //Creating the matrix that holds all pixel data
+	cv::Mat bestLabels, centers, clustered; //Returns from the K Means
+//	std::vector<cv::Mat> bgr;    //Holds the BGR channels
+//	cv::split(src, bgr);
 
+	//Getting all pixels in the Data row column to be compatible with K Means
+	for (int i = 0; i < src.cols * src.rows; i++)
+	{
+		data.at<float>(i, 0) = src.data[i] / 255.0;
+		data.at<float>(i, 1) = src.data[i] / 255.0;
+		data.at<float>(i, 2) = src.data[i] / 255.0;
+	}
+
+	int K = quantizationColors;    //Number of clusters
+	cv::kmeans(data, K, bestLabels,
+		cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 20, 0.1),
+		3, cv::KMEANS_RANDOM_CENTERS, centers);
+
+	centers = centers.reshape(3, centers.rows);
+	data = data.reshape(3, data.rows);
+
+	clustered = cv::Mat(src.rows, src.cols, CV_32F);
+
+	cv::Vec3f* p = data.ptr<cv::Vec3f>();
+	for (size_t i = 0; i < data.rows; i++)
+	{
+		int center_id = bestLabels.at<int>(i);
+		p[i] = centers.at<cv::Vec3f>(center_id);
+	}
+
+	clustered = data.reshape(3, src.rows);
+	return clustered;
+}
 
 
 

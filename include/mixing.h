@@ -17,7 +17,7 @@ class Mixing
 private:
 		int bottom, left;
 		float scale;
-		void findInterface(cv::Point& leftInterface, cv::Point& rightInterface);
+		void findInterface(cv::Point& leftInterface, cv::Point& rightInterface, int type, cv::Mat* exibir);
 public:
 
 		eulerianField MixingField;

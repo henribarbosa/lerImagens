@@ -1125,6 +1125,8 @@ read_control.h
 /home/user/Área de Trabalho/Teste/lerImagem/include/read_control.h
 
 /home/user/Área de Trabalho/Teste/lerImagem/include/circles_data.h
+cmath
+-
 
 /home/user/Área de Trabalho/Teste/lerImagem/include/circulos.h
 opencv2/core/core.hpp

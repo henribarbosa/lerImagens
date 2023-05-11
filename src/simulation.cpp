@@ -110,6 +110,8 @@ void Simulation_data::readFile(std::string filePath, std::string method, bool bi
 	ParticleNumber2.writeFrame(frame);
 	GranularTemperature.consolidateField();
 	GranularTemperature.writeFrame(frame);
+//	std::cout << ParticleFraction.NumberHeights << " " << ParticleFraction.NumberWidths << " " << ParticleFraction.NumberWidths << std::endl;
+	ParticleFraction.writeFrame(frame);
 }
 
 void Simulation_data::newFile(std::string name)

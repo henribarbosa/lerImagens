@@ -288,6 +288,7 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 			auction pathFinder(LagrangianThreshold.returnThreshold());
 			pathFinder.run(&exibirTrajectories, particle_track);
 				
+//			exibir = quantizeImage(&image, 3);
 			cv::imshow("Expansao leito", exibir);
 			cv::imshow("detected circles", exibirCircles);
 			cv::imshow("circles path", exibirTrajectories);

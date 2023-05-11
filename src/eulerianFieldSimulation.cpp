@@ -416,26 +416,26 @@ void eulerianFieldPartFracSimulation::addParticleFraction(float r, float x, floa
 	float dz = Heights[1] - Heights[0];
 	float Vcell = M_PI*(Width/2.0)*dz;
 	
-	if (z - Heights[heightIndex] < r)
+	if (z - Heights[heightIndex] < r && heightIndex > 0)
 	{
 		float h = z - Heights[heightIndex];
-		float V1 = 1/3*M_PI*pow(r-h,2)*(2*r+h);
-		float V2 = 4/3*M_PI*pow(r,3) - V1;
+		float V1 = 1/3.0*M_PI*pow(r-h,2)*(2*r+h);
+		float V2 = 4/3.0*M_PI*pow(r,3) - V1;
 		Field[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] = Field[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] + V2/Vcell;
 		Field[(heightIndex-1)*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] = Field[(heightIndex-1)*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] + V1/Vcell;
 		return;
 	}
-	if (Heights[heightIndex-1] - z < r)
+	if (Heights[heightIndex-1] - z < r && heightIndex < NumberHeights-1)
 	{
 		float h = Heights[heightIndex+1] - z;
-		float V1 = 1/3*M_PI*pow(r-h,2)*(2*r+h);
-		float V2 = 4/3*M_PI*pow(r,3) - V1;
+		float V1 = 1/3.0*M_PI*pow(r-h,2)*(2*r+h);
+		float V2 = 4/3.0*M_PI*pow(r,3) - V1;
 		Field[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] = Field[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] + V2/Vcell;
 		Field[(heightIndex+1)*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] = Field[(heightIndex+1)*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] + V1/Vcell;
 		return;
 	}
 
-	Field[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] = Field[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] + 4/3*M_PI*pow(r,3)/Vcell;
+	Field[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] = Field[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX] + 4/3.0*M_PI*pow(r,3)/Vcell;
 	numberPoints[heightIndex*(NumberWidths*NumberWidths) + widthIndexY*NumberWidths + widthIndexX]++;
 	//std::cout << heightIndex << " , " << widthIndex << " : " << Field[heightIndex*NumberWidths+widthIndex] << " , " << numberPoints[heightIndex*NumberWidths+widthIndex] << std::endl;
 }

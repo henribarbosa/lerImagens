@@ -76,8 +76,8 @@ class eulerianFieldPartFracSimulation : public eulerianFieldSimulation
 {
 public:
 	eulerianFieldPartFracSimulation()
-	{ eulerianFieldSimulation(); }
+	: eulerianFieldSimulation() { };
 	eulerianFieldPartFracSimulation(int NumberHeightsI, int NumberWidthsI, float HeightI, float WidthI, const char* fieldNameI)
-	{ eulerianFieldSimulation(NumberHeightsI, NumberWidthsI, HeightI, WidthI, fieldNameI); }
+	: eulerianFieldSimulation(NumberHeightsI, NumberWidthsI, HeightI, WidthI, fieldNameI) { };
 	void addParticleFraction(float r, float x, float y, float z);
 };

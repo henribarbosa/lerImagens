@@ -157,13 +157,13 @@ bool auction::read_files()
 	//circulos = 10;
 	frame1.reserve(circulos);
 
-	float x, y, r;		
+	float x, y, r, brightness;		
 	bool plug;
 	int type;
 	for (int i = 0; i < circulos; ++i) {
-		file >> x >> y >> r >> plug >> type;
+		file >> x >> y >> r >> plug >> brightness >> type;
 		//std::cout << x << " , " << y << std::endl;
-		frame1.push_back(circles_data(x, y, r, plug, type));
+		frame1.push_back(circles_data(x, y, r, plug, brightness, type));
 	}
 
 	file.close();
@@ -177,8 +177,8 @@ bool auction::read_files()
 	frame0.reserve(circulos);
 	for (int i = 0; i < circulos; ++i)
 	{
-		file >> x >> y >> r >> plug >> type;
-		frame0.push_back(circles_data(x, y, r, plug, type));
+		file >> x >> y >> r >> plug >> brightness >> type;
+		frame0.push_back(circles_data(x, y, r, plug, brightness, type));
 	}
 
 	file.close();

@@ -1,2 +1,6 @@
-/media/dados0/Mestrado/Leito_Ar/Porosity5/Case_3.0
-/media/dados0/Mestrado/Leito_Ar/Porosity5/Case_4.0
+/media/dados0/Mestrado/Leito_Ar/Case_1.0
+/media/dados0/Mestrado/Leito_Ar/Case_1.5
+/media/dados0/Mestrado/Leito_Ar/Case_2.0
+/media/dados0/Mestrado/Leito_Ar/Case_2.5
+/media/dados0/Mestrado/Leito_Ar/Case_3.0
+/media/dados0/Mestrado/Leito_Ar/Case_3.5

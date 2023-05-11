@@ -18,6 +18,8 @@
 
 void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>& plugs);
 
+cv::Mat quantizeImage(cv::Mat* image, int quantizationColors);
+
 //accept only masks to speed up calculations
 void generalMoviment(cv::Mat* image, cv::Mat* exibir, cv::Rect* bed, std::vector<cv::Rect>& plugs);
 

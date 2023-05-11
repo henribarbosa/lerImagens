@@ -636,7 +636,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 						kalmanMidlePointsNew.push_back({xProjected, yProjected});
 						kalmanLabelsNew.push_back(kalmanLabel[j]);
 
-						circles_data currentPoint(kalmanMidlePoints[j].first, kalmanMidlePoints[j].second, 0, false, 1);
+						circles_data currentPoint(kalmanMidlePoints[j].first, kalmanMidlePoints[j].second, 0, false, 0, 1);
 						makeFigureUpdate(exibir, points[i], currentPoint, last_label);
 
 						Temperature.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, -1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale, (left-points[i].y)*scale);

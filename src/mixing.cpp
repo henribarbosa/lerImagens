@@ -24,13 +24,13 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 	particles.clear();
 	particles.reserve(circulos);
 
-	float x, y, r;		
+	float x, y, r, brightness;		
 	bool plug;
 	int type;
 	for (int i = 0; i < circulos; ++i) {
-		file >> x >> y >> r >> plug >> type;
+		file >> x >> y >> r >> plug >> brightness >> type;
 		//std::cout << x << " , " << y << std::endl;
-		particles.push_back(circles_data(x, y, r, plug, type));
+		particles.push_back(circles_data(x, y, r, plug, brightness, type));
 	}
 
 	file.close();
@@ -44,104 +44,71 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 	MixingField.consolidateField();
 
 	// find interface
-	findInterface(leftInterface, rightInterface);
-	leftInterface.y = 0;
-	rightInterface.y = exibir->rows;
-	cv::rectangle(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,0), 3);
+	findInterface(leftInterface, rightInterface, 2, exibir);
+	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,0), 3);
 
 	MixingField.writeFrame(frame);
 }
 
-void Mixing::findInterface(cv::Point& leftInterface, cv::Point& rightInterface)
+void Mixing::findInterface(cv::Point& leftInterface, cv::Point& rightInterface, int type, cv::Mat* exibir)
 {
-	control mixingThreshold("thresholds.txt", "MixingStep");
-	int step = mixingThreshold.returnThreshold();
+	leftInterface.y = 0;
+	rightInterface.y = exibir->rows;
+	int dy = exibir->rows;
 
-	control minParticlesThreshold("thresholds.txt", "MinParticleCount");
-	int minParticleCount = minParticlesThreshold.returnThreshold();
-
-	int top_interface = 0;
-	int most_removed = -1;
-	while (top_interface < bottom) 
+	if ( type == 2 )
 	{
-		int new_top = top_interface + step;
+		leftInterface.x = exibir->cols;
+		rightInterface.x = exibir->cols;
 
-		int type_1 = 0, type_2 = 0;
-		for (int i = 0; i < particles.size(); i++)
+		for ( auto circle : particles )
 		{
-			if (particles[i].x < top_interface)
+			if ( circle.type != type)
 				continue;
-			if (particles[i].x > new_top)
-				continue;
-			if (particles[i].type == 1)
-				type_1++;
-			else
-				type_2++;
-		}
 
-//		std::cout << type_1 << " , " << type_2 << std::endl;
-		if (type_1 < minParticleCount && type_2 < minParticleCount)
-		{
-			top_interface = new_top;
-			continue;
+			cv::Point testPoint = cv::Point(circle.x,circle.y);
+			if ( (testPoint.x - leftInterface.x) - (rightInterface.x - leftInterface.x)/(rightInterface.y - 1.0*leftInterface.y)*(testPoint.y - leftInterface.y) < 0)
+			{
+				float mLeft = (testPoint.x - leftInterface.x) / (1.0 * (testPoint.y - leftInterface.y));
+				float mRight= (testPoint.x - rightInterface.x) / (1.0 * (testPoint.y - rightInterface.y));
+				if (abs(mLeft) > abs(mRight))
+				{
+					rightInterface.x = (int)(leftInterface.x + mLeft * dy);
+				}
+				else
+				{
+					leftInterface.x = (int)(rightInterface.x - mRight * dy);
+				}
+
+			}
 		}
-		int new_removed = (type_2 > type_1) ? 2 : 1;
-		if (most_removed < 0)
-		{
-			most_removed = new_removed;
-			top_interface = new_top;
-			continue;
-		}
-//		if (most_removed != new_removed)
-		if (most_removed == 1 && type_2 > minParticleCount)
-			break;
-		if (most_removed == 2 && type_1 > minParticleCount)
-			break;
-		top_interface = new_top;
 	}
 
-	int bottom_interface = bottom;
-	most_removed = -1;
-	while (bottom_interface > 0) 
+	if ( type == 1 )
 	{
-		int new_bottom = bottom_interface - step;
+		leftInterface.x = 0;
+		rightInterface.x = 0;
 
-		int type_1 = 0, type_2 = 0;
-		for (int i = 0; i < particles.size(); i++)
+		for ( auto circle : particles )
 		{
-			if (particles[i].x > bottom_interface)
+			if ( circle.type != type)
 				continue;
-			if (particles[i].x < new_bottom)
-				continue;
-			if (particles[i].type == 1)
-				type_1++;
-			else
-				type_2++;
-		}
 
-		if (type_1 < minParticleCount && type_2 < minParticleCount)
-		{
-			bottom_interface = new_bottom;
-			continue;
-		}
+			cv::Point testPoint = cv::Point(circle.x,circle.y);
+			if ( (testPoint.x - leftInterface.x) - (rightInterface.x - leftInterface.x)/(rightInterface.y - 1.0*leftInterface.y)*(testPoint.y - leftInterface.y) > 0)
+			{
+				float mLeft = (testPoint.x - leftInterface.x) / (1.0 * (testPoint.y - leftInterface.y));
+				float mRight= (testPoint.x - rightInterface.x) / (1.0 * (testPoint.y - rightInterface.y));
+				if (abs(mLeft) > abs(mRight))
+				{
+					rightInterface.x = (int)(leftInterface.x + mLeft * dy);
+				}
+				else
+				{
+					leftInterface.x = (int)(rightInterface.x - mRight * dy);
+				}
 
-		int new_removed = (type_2 > type_1) ? 2 : 1;
-		if (most_removed < 0)
-		{
-			most_removed = new_removed;
-			bottom_interface = new_bottom;
-			continue;
+			}
 		}
-//		if (most_removed != new_removed)
-		if (most_removed == 1 && type_2 > minParticleCount)
-			break;
-		if (most_removed == 2 && type_1 > minParticleCount)
-			break;
-		bottom_interface = new_bottom;
 	}
-
-	leftInterface.x = top_interface;
-	rightInterface.x = bottom_interface;
-
-
 }
