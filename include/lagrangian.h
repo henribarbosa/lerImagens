@@ -70,7 +70,7 @@ public:
 
 	void merge(int* array, int const left, int const mid, int const right, std::vector<int>& particles);
 	void mergeSort(int* array, int const begin, int const end, std::vector<int>& particles);
-	template <typename T> void orderVectors(std::vector<int>& particles, std::vector<T>& x, std::vector<T>& y, std::vector<T> z);
+	template <typename T> void orderVectors(std::vector<int>& particles, std::vector<T>& x, std::vector<T>& y, std::vector<T>& z);
 
 	float velocitySquared(circles_data& p1, circles_data& p2);
 

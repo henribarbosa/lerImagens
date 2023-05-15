@@ -23,7 +23,7 @@ MinimumPlugHeight : 20
 
 # Threshold to find different particle in the interface (midle value between ligther and darker particles)
 LowerThreshold : 175
-UpperThreshold : 215
+UpperThreshold : 220
 
 # Step to find interface
 MixingStep : 30

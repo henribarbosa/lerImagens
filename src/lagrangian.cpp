@@ -789,7 +789,7 @@ void lagrangian::mergeSort(int* array, int const begin, int const end, std::vect
 }
 
 template <typename T>
-void lagrangian::orderVectors(std::vector<int>& particles, std::vector<T>& x, std::vector<T>& y, std::vector<T> z)
+void lagrangian::orderVectors(std::vector<int>& particles, std::vector<T>& x, std::vector<T>& y, std::vector<T>& z)
 {
 	int* labelsArray = new int[particles.size()];
 	for (int i = 0; i < particles.size(); ++i)
