@@ -12,6 +12,9 @@ Mixing::Mixing(int bottom, int left, float scale)
 
 void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Point& rightInterface, int frame)
 {
+	std::vector<cv::Point> CirculosTipo1;
+	std::vector<cv::Point> CirculosTipo2;
+
 	// read particles
 	std::ifstream file;
 	std::string linha;
@@ -39,6 +42,14 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 	for (int i = 0; i < particles.size(); i++)
 	{
 		MixingField.addParticle(particles[i].type - 1, (bottom - particles[i].x)*scale, (left - particles[i].y)*scale);
+		if (particles[i].type == 1) 
+		{
+			CirculosTipo1.push_back(cv::Point(particles[i].x, particles[i].y));
+		}
+		else if (particles[i].type == 2) 
+		{
+			CirculosTipo2.push_back(cv::Point(particles[i].x, particles[i].y));
+		}
 	}
 
 	MixingField.consolidateField();
@@ -46,10 +57,20 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 	orderVectors(particles);
 
 	// find interface
-	findInterface(leftInterface, rightInterface, 2, exibir);
-	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,0), 3);
-	findInterface(leftInterface, rightInterface, 1, exibir);
-	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,255), 3);
+//	findInterface(leftInterface, rightInterface, 2, exibir);
+//	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,0), 3);
+
+	std::vector<cv::Point> hull;
+	cv::convexHull(CirculosTipo1, hull);
+	std::vector<std::vector<cv::Point>> hullShow; hullShow.push_back(hull);
+	cv::drawContours(*exibir, hullShow, 0, cv::Scalar(0,255,0), 3);
+
+	cv::convexHull(CirculosTipo2, hull);
+	hullShow.clear(); hullShow.push_back(hull);
+	cv::drawContours(*exibir, hullShow, 0, cv::Scalar(0,255,255), 3);
+
+//	findInterface(leftInterface, rightInterface, 1, exibir);
+//	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,255), 3);
 
 
 	MixingField.writeFrame(frame);
