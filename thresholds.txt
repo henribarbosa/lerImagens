@@ -25,6 +25,9 @@ MinimumPlugHeight : 20
 LowerThreshold : 175
 UpperThreshold : 220
 
+# Control how concave the particles envelope can be
+ConcaveDotThreshold : -0.1
+
 # Step to find interface
 MixingStep : 30
 

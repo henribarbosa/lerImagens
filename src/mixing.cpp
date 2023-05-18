@@ -60,20 +60,24 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 //	findInterface(leftInterface, rightInterface, 2, exibir);
 //	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,0), 3);
 
-	std::vector<cv::Point> hull;
-	cv::convexHull(CirculosTipo1, hull);
-	std::vector<std::vector<cv::Point>> hullShow; hullShow.push_back(hull);
-	cv::drawContours(*exibir, hullShow, 0, cv::Scalar(0,255,0), 3);
+//	std::vector<cv::Point> hull;
+//	cv::convexHull(CirculosTipo1, hull);
+//	std::vector<std::vector<cv::Point>> hullShow; hullShow.push_back(hull);
+//	cv::drawContours(*exibir, hullShow, 0, cv::Scalar(0,255,0), 3);
 
-	cv::convexHull(CirculosTipo2, hull);
-	hullShow.clear(); hullShow.push_back(hull);
-	cv::drawContours(*exibir, hullShow, 0, cv::Scalar(0,255,255), 3);
+//	cv::convexHull(CirculosTipo2, hull);
+//	hullShow.clear(); hullShow.push_back(hull);
+//	cv::drawContours(*exibir, hullShow, 0, cv::Scalar(0,255,255), 3);
 
 //	findInterface(leftInterface, rightInterface, 1, exibir);
 //	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,255), 3);
 	std::vector<std::vector<cv::Point>> concaveShow;
 	concaveShow.push_back(concaveHull(1));
 	cv::drawContours(*exibir, concaveShow, 0, cv::Scalar(255,255,0), 3);
+
+	concaveShow.clear();
+	concaveShow.push_back(concaveHull(2));
+	cv::drawContours(*exibir, concaveShow, 0, cv::Scalar(0,255,255), 3);
 
 	MixingField.writeFrame(frame);
 }
@@ -100,10 +104,13 @@ std::vector<cv::Point> Mixing::concaveHull(int type)
 	std::vector<circles_data> particles_stack;
 	particles_stack.push_back(reference);
 
+	control DotThreshold("thresholds.txt", "ConcaveDotThreshold");
+	float threshold = DotThreshold.returnThreshold();
+
 	for (int i = 0; i < particles_type.size(); i++) {
 		while (particles_stack.size() > 1){
-			if (left_turn(particles_stack[particles_stack.size()-2],particles_stack[particles_stack.size()-1],particles_type[i]) or 
-				large_turn(particles_stack[particles_stack.size()-2], particles_stack[particles_stack.size()-1], particles_type[i])) {
+			if (left_turn(particles_stack[particles_stack.size()-2],particles_stack[particles_stack.size()-1],particles_type[i]) and not 
+				large_turn(particles_stack[particles_stack.size()-2], particles_stack[particles_stack.size()-1], particles_type[i], threshold)) {
 				particles_stack.pop_back();
 			}
 			else
@@ -134,7 +141,7 @@ bool left_turn(circles_data base, circles_data atual, circles_data teste)
 	return (vectorProduct > 0) ? true : false;
 }
 
-bool large_turn(circles_data base, circles_data atual, circles_data teste)
+bool large_turn(circles_data base, circles_data atual, circles_data teste, float threshold)
 {
 	float dx1 = 1.0*(atual.x - base.x);
 	float dy1 = 1.0*(atual.y - base.y);
@@ -143,7 +150,7 @@ bool large_turn(circles_data base, circles_data atual, circles_data teste)
 
 	float dotProduct = (float)(dx1*dx2 + dy1*dy2) / ( std::sqrt(pow(dx1,2) + pow(dy1,2)) * std::sqrt(pow(dx2,2) + pow(dy2,2)) );
 //	std::cout << dotProduct << std::endl;
-	return (dotProduct > 0.9) ? true : false;
+	return (dotProduct > threshold) ? true : false;
 
 }
 

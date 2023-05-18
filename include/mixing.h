@@ -47,4 +47,4 @@ int compare_angle(circles_data c1, circles_data c2, circles_data reference);
 
 bool left_turn(circles_data base, circles_data atual, circles_data teste);
 
-bool large_turn(circles_data base, circles_data atual, circles_data teste);
+bool large_turn(circles_data base, circles_data atual, circles_data teste, float threshold);
