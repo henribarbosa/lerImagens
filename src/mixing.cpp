@@ -54,7 +54,7 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 
 	MixingField.consolidateField();
 
-	orderVectors(particles);
+	orderVectors_height(particles);
 
 	// find interface
 //	findInterface(leftInterface, rightInterface, 2, exibir);
@@ -71,9 +71,80 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 
 //	findInterface(leftInterface, rightInterface, 1, exibir);
 //	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,255), 3);
-
+	std::vector<std::vector<cv::Point>> concaveShow;
+	concaveShow.push_back(concaveHull(1));
+	cv::drawContours(*exibir, concaveShow, 0, cv::Scalar(255,255,0), 3);
 
 	MixingField.writeFrame(frame);
+}
+
+std::vector<cv::Point> Mixing::concaveHull(int type)
+{
+	std::vector<circles_data> particles_type;
+	for (circles_data circle : particles) {
+		if (circle.type == type) {
+			particles_type.push_back(circle);
+		}
+	}
+
+	circles_data reference = particles_type[0];
+
+	for (int i = 0; i < particles_type.size()-1; i++) {
+		particles_type[i] = particles_type[i+1];
+	}
+	particles_type.pop_back();
+
+	orderVectors_angle(particles_type, reference);
+//	std::cout << compare_angle(particles_type[0],particles_type[10],reference) << std::endl;
+
+	std::vector<circles_data> particles_stack;
+	particles_stack.push_back(reference);
+
+	for (int i = 0; i < particles_type.size(); i++) {
+		while (particles_stack.size() > 1){
+			if (left_turn(particles_stack[particles_stack.size()-2],particles_stack[particles_stack.size()-1],particles_type[i]) or 
+				large_turn(particles_stack[particles_stack.size()-2], particles_stack[particles_stack.size()-1], particles_type[i])) {
+				particles_stack.pop_back();
+			}
+			else
+				break;
+		}
+		particles_stack.push_back(particles_type[i]);
+	}
+	particles_stack.push_back(reference);
+
+	std::vector<cv::Point> particles_return;
+	for (int i = 0; i < particles_stack.size(); i++) {
+		particles_return.push_back(cv::Point(particles_stack[i].x, particles_stack[i].y));
+	}
+
+	return particles_return;
+
+}
+
+bool left_turn(circles_data base, circles_data atual, circles_data teste)
+{
+	float dx1 = atual.x - base.x;
+	float dy1 = atual.y - base.y;
+	float dx2 = teste.x - atual.x;
+	float dy2 = teste.y - atual.y;
+
+	float vectorProduct = dx1*dy2 - dx2*dy1;
+//	std::cout << vectorProduct << std::endl;
+	return (vectorProduct > 0) ? true : false;
+}
+
+bool large_turn(circles_data base, circles_data atual, circles_data teste)
+{
+	float dx1 = 1.0*(atual.x - base.x);
+	float dy1 = 1.0*(atual.y - base.y);
+	float dx2 = 1.0*(teste.x - atual.x);
+	float dy2 = 1.0*(teste.y - atual.y);
+
+	float dotProduct = (float)(dx1*dx2 + dy1*dy2) / ( std::sqrt(pow(dx1,2) + pow(dy1,2)) * std::sqrt(pow(dx2,2) + pow(dy2,2)) );
+//	std::cout << dotProduct << std::endl;
+	return (dotProduct > 0.9) ? true : false;
+
 }
 
 void Mixing::findInterface(cv::Point& leftInterface, cv::Point& rightInterface, int type, cv::Mat* exibir)
@@ -189,7 +260,7 @@ void Mixing::findInterface(cv::Point& leftInterface, cv::Point& rightInterface, 
 }
 
 template <typename T>
-void merge(int* array, int const left, int const mid, int const right, std::vector<T>& vector)
+void merge_height(int* array, int const left, int const mid, int const right, std::vector<T>& vector)
 {
 	auto const subArrayOne = mid - left + 1;
 	auto const subArrayTwo = right - mid;
@@ -209,7 +280,7 @@ void merge(int* array, int const left, int const mid, int const right, std::vect
 
 	// Merge the temp arrays back into array[left..right]
 	while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo) {
-		if (vector[leftArray[indexOfSubArrayOne]].x <= vector[rightArray[indexOfSubArrayTwo]].x) {
+		if (compare_height(vector[leftArray[indexOfSubArrayOne]], vector[rightArray[indexOfSubArrayTwo]])) {
 			array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
 			indexOfSubArrayOne++;
 		}
@@ -241,19 +312,19 @@ void merge(int* array, int const left, int const mid, int const right, std::vect
 // right index of the sub-array
 // of arr to be sorted */
 template <typename T>
-void mergeSort(int* array, int const begin, int const end, std::vector<T>& vector)
+void mergeSort_height(int* array, int const begin, int const end, std::vector<T>& vector)
 {
 	if (begin >= end)
 		return; // Returns recursively
 
 	auto mid = begin + (end - begin) / 2;
-	mergeSort(array, begin, mid, vector);
-	mergeSort(array, mid + 1, end, vector);
-	merge(array, begin, mid, end, vector);
+	mergeSort_height(array, begin, mid, vector);
+	mergeSort_height(array, mid + 1, end, vector);
+	merge_height(array, begin, mid, end, vector);
 }
 
 template <typename T>
-void orderVectors(std::vector<T>& vector)
+void orderVectors_height(std::vector<T>& vector)
 {
 	int* labelsArray = new int[vector.size()];
 	for (int i = 0; i < vector.size(); ++i)
@@ -261,7 +332,7 @@ void orderVectors(std::vector<T>& vector)
 		labelsArray[i] = i;
 	}
 
-	mergeSort(labelsArray, 0, vector.size()-1, vector);
+	mergeSort_height(labelsArray, 0, vector.size()-1, vector);
 
 	std::vector<T> returnVector;
 	returnVector.reserve(vector.size());
@@ -286,4 +357,141 @@ void orderVectors(std::vector<T>& vector)
 //	x = returnX;
 //	y = returnY;
 //	z = returnZ;
+}
+
+template <typename T>
+void merge_angle(int* array, int const left, int const mid, int const right, std::vector<T>& vector, T reference)
+{
+	auto const subArrayOne = mid - left + 1;
+	auto const subArrayTwo = right - mid;
+
+	// Create temp arrays
+	auto *leftArray = new int[subArrayOne], *rightArray = new int[subArrayTwo];
+
+	// Copy data to temp arrays leftArray[] and rightArray[]
+	for (auto i = 0; i < subArrayOne; i++)
+		leftArray[i] = array[left + i];
+	for (auto j = 0; j < subArrayTwo; j++)
+		rightArray[j] = array[mid + 1 + j];
+
+	auto indexOfSubArrayOne = 0, // Initial index of first sub-array
+	indexOfSubArrayTwo = 0; // Initial index of second sub-array
+	int indexOfMergedArray = left; // Initial index of merged array
+
+	// Merge the temp arrays back into array[left..right]
+	while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo) {
+		int comp = compare_angle(vector[leftArray[indexOfSubArrayOne]], vector[rightArray[indexOfSubArrayTwo]], reference);
+		if (comp == 1) {
+			array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+			indexOfSubArrayOne++;
+		}
+		else if (comp == -1) {
+			if (vector[leftArray[indexOfSubArrayOne]].x < vector[rightArray[indexOfSubArrayTwo]].x) {
+				array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+				indexOfSubArrayOne++;
+			}
+			else {
+				array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+				indexOfSubArrayTwo++;
+			}
+		}
+		else {
+			array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+			indexOfSubArrayTwo++;
+		}
+		indexOfMergedArray++;
+	}
+	// Copy the remaining elements of
+	// left[], if there are any
+	while (indexOfSubArrayOne < subArrayOne) {
+		array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+		indexOfSubArrayOne++;
+		indexOfMergedArray++;
+	}
+	// Copy the remaining elements of
+	// right[], if there are any
+	while (indexOfSubArrayTwo < subArrayTwo) {
+		array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+		indexOfSubArrayTwo++;
+		indexOfMergedArray++;
+	}
+	delete[] leftArray;
+	delete[] rightArray;
+}
+
+// begin is for left index and end is
+// right index of the sub-array
+// of arr to be sorted */
+template <typename T>
+void mergeSort_angle(int* array, int const begin, int const end, std::vector<T>& vector, T reference)
+{
+	if (begin >= end)
+		return; // Returns recursively
+
+	auto mid = begin + (end - begin) / 2;
+	mergeSort_angle(array, begin, mid, vector, reference);
+	mergeSort_angle(array, mid + 1, end, vector, reference);
+	merge_angle(array, begin, mid, end, vector, reference);
+}
+
+template <typename T>
+void orderVectors_angle(std::vector<T>& vector, T reference)
+{
+	int* labelsArray = new int[vector.size()];
+	for (int i = 0; i < vector.size(); ++i)
+	{
+		labelsArray[i] = i;
+	}
+
+	mergeSort_angle(labelsArray, 0, vector.size()-1, vector, reference);
+
+	std::vector<T> returnVector;
+	returnVector.reserve(vector.size());
+	for (int i = 0; i < vector.size(); i++)
+	{
+		returnVector.push_back(vector[labelsArray[i]]);
+	}
+
+	vector = returnVector;
+
+//	std::vector<int> returnParticles;
+//	std::vector<T> returnX, returnY, returnZ;
+//	for (int i = 0; i < particles.size(); ++i)
+//	{
+//		returnParticles.push_back(particles[labelsArray[i]]);
+//		returnX.push_back(x[labelsArray[i]]);
+//		returnY.push_back(y[labelsArray[i]]);
+//		returnZ.push_back(z[labelsArray[i]]);
+//	}
+//
+//	particles = returnParticles;
+//	x = returnX;
+//	y = returnY;
+//	z = returnZ;
+}
+bool compare_height(circles_data c1, circles_data c2)
+{
+	return (c1.x >= c2.x);
+}
+
+int compare_angle(circles_data c1, circles_data c2, circles_data referenece)
+{
+	float dx1 = c1.x - referenece.x;
+	float dx2 = c2.x - referenece.x;
+	float dy1 = c1.y - referenece.y;
+	float dy2 = c2.y - referenece.y;
+
+	float cos1 = dy1 / std::sqrt(std::pow(dx1,2) + std::pow(dy1,2));
+	float cos2 = dy2 / std::sqrt(std::pow(dx2,2) + std::pow(dy2,2));
+//	std::cout << cos1 << " , " << cos2 << std::endl;
+
+	if (cos1 == cos2){
+		return -1;
+	}
+	else if (cos1 < cos2){
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
