@@ -22,6 +22,10 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 	int circulos;
 	file >> circulos;
 	std::getline(file,linha);
+
+	//write file
+	std::ofstream writeFile;
+	writeFile.open("Files/mixing_number.txt", std::ios::app);
 	
 //	std::vector<circles_data> particles;
 	particles.clear();
@@ -38,6 +42,9 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 
 	file.close();
 
+	particlesType1 = cv::Mat::zeros(exibir->size(), CV_8UC1);
+	particlesType2 = cv::Mat::zeros(exibir->size(), CV_8UC1);
+
 	// add particles
 	for (int i = 0; i < particles.size(); i++)
 	{
@@ -45,12 +52,18 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 		if (particles[i].type == 1) 
 		{
 			CirculosTipo1.push_back(cv::Point(particles[i].x, particles[i].y));
+			particlesType1.at<uchar>(particles[i].y, particles[i].x) = 1;
 		}
 		else if (particles[i].type == 2) 
 		{
 			CirculosTipo2.push_back(cv::Point(particles[i].x, particles[i].y));
+			particlesType2.at<uchar>(particles[i].y, particles[i].x) = 1;
 		}
 	}
+
+//	std::cout << CirculosTipo1.size() << " " << CirculosTipo2.size() << std::endl;
+
+	writeFile << cv::countNonZero(particlesType1) << " " << cv::countNonZero(particlesType2) << " ";
 
 	MixingField.consolidateField();
 
@@ -74,10 +87,22 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 	std::vector<std::vector<cv::Point>> concaveShow;
 	concaveShow.push_back(concaveHull(1));
 	cv::drawContours(*exibir, concaveShow, 0, cv::Scalar(255,255,0), 3);
+	
+	hullType1 = cv::Mat::zeros(exibir->size(), CV_8UC1);
+	cv::drawContours(hullType1, concaveShow, 0, cv::Scalar(255), -1);
+//	cv::bitwise_and(hullType1,*exibir,*exibir);
 
 	concaveShow.clear();
 	concaveShow.push_back(concaveHull(2));
 	cv::drawContours(*exibir, concaveShow, 0, cv::Scalar(0,255,255), 3);
+
+	hullType2 = cv::Mat::zeros(exibir->size(), CV_8UC1);
+	cv::drawContours(hullType2, concaveShow, 0, cv::Scalar(255), -1);
+
+	// particles in different region
+	cv::bitwise_and(particlesType1, hullType2, particlesType1);
+	cv::bitwise_and(particlesType2, hullType1, particlesType2);
+	writeFile << cv::countNonZero(particlesType1) << " " << cv::countNonZero(particlesType2) << std::endl;
 
 	MixingField.writeFrame(frame);
 }
@@ -86,12 +111,17 @@ std::vector<cv::Point> Mixing::concaveHull(int type)
 {
 	std::vector<circles_data> particles_type;
 	for (circles_data circle : particles) {
+//		std::cout << circle.type << " ";
 		if (circle.type == type) {
 			particles_type.push_back(circle);
 		}
 	}
 
+//	std::cout << "Ok" << particles_type.size() << std::endl;
+
 	circles_data reference = particles_type[0];
+
+//	std::cout << "Ok" << std::endl;
 
 	for (int i = 0; i < particles_type.size()-1; i++) {
 		particles_type[i] = particles_type[i+1];

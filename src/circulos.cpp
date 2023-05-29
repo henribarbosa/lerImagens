@@ -4,9 +4,9 @@
 void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>& rectangles)
 {
 	// adjust bed to not consider borders, too much errors
-	bed.y = bed.y + 5;
-	bed.height = bed.height - 10;
-	bed.width = bed.width - 5;
+//	bed.y = bed.y + 7;
+//	bed.height = bed.height - 14;
+//	bed.width = bed.width - 20;
 
 	cv::Mat figure = (*image)(bed);
 

@@ -156,6 +156,11 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 		cv::namedWindow("circles path", cv::WINDOW_NORMAL);
 		cv::resizeWindow("circles path", 1200,50);
 
+		std::ofstream file;
+		file.open("Files/mixing_number.txt", std::ios::trunc);
+		file << "";
+		file.close();
+
 	}
 
 	if (Method == "expansion")

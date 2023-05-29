@@ -179,10 +179,10 @@ void plugs(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>
 		}
 	}
 
-	for (int i = 0; i < rectangles.size(); i++)
-	{
-		cv::rectangle(*exibir, rectangles[i] + offset, cv::Scalar(0, 0, 255), 2, 8);
-	}
+//	for (int i = 0; i < rectangles.size(); i++)
+//	{
+//		cv::rectangle(*exibir, rectangles[i] + offset, cv::Scalar(0, 0, 255), 2, 8);
+//	}
 
 	std::ofstream file;
 	file.open("Files/Plugs.txt", std::ios::app);

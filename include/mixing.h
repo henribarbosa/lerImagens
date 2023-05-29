@@ -20,6 +20,8 @@ private:
 		float scale;
 		void findInterface(cv::Point& leftInterface, cv::Point& rightInterface, int type, cv::Mat* exibir);
 		std::vector<cv::Point> concaveHull(int type);
+		cv::Mat particlesType1, particlesType2;
+		cv::Mat hullType1, hullType2;
 public:
 
 		eulerianField MixingField;
