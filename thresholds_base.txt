@@ -1,0 +1,62 @@
+#File to declare all thresholds
+
+# Bed width (mm)
+BedWidth : 3.0
+
+# Largest distance treveled by a particle in a frame
+AuctionMaxDist : 15
+
+# Minimim pixel value (/255) to be considered a particle and measure height
+HeightPixelThreshold : 30 
+
+# Minimum pixel sum to find margins
+MinimumSumFindMargins : 5000
+
+# Minimum pixel value to be considered a particle to look for plugs
+BinaryImagePlugs : 1
+
+# Minimum light fraction to be considered a plug
+MinimumPlugFraction : 0.5
+
+# Minimum height of a plug and minimum height to divide plugs
+MinimumPlugHeight : 20
+
+# Threshold to find different particle in the interface (midle value between ligther and darker particles)
+LowerThreshold : A1A
+UpperThreshold : A2A
+
+# Control how concave the particles envelope can be
+ConcaveDotThreshold : -0.1
+
+# Step to find interface
+MixingStep : 30
+
+# Minimum particle count to look for interface
+MinParticleCount : 6
+
+# Priority of particles in the interface search
+HoughBalanceParticles : 100
+
+# Max number of iteration in the auction algorithim
+MaxAuctionIterations : 1000000
+
+# Max ratio of velocities to be considered an outlier
+AuctionMagnitudeRatioMax : 1.25
+
+# Min value of dot product to be considered an outlier
+AuctionInternalProductMin : 0.85
+
+# Threshold to look for particles
+CirclesThreshold : 155
+
+# Max value to be considered background in the look for particles
+CircleMinimumValueThreshold : 15
+
+# Simulation tube radius
+SimulationDiameter : 0.003
+
+# Simulation tube height
+SimulationHeight : 0.15
+
+# Simulation minimum particle volumetric fraction to plugs
+SimulationPlugThreshold : 0.08
