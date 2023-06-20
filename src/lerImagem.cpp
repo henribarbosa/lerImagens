@@ -299,11 +299,11 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 			cv::imshow("Expansao leito", exibir);
 			cv::imshow("detected circles", exibirCircles);
 			cv::imshow("circles path", exibirTrajectories);
-			if (i % 2 == 0) {
-				cv::imwrite("Expansao_Images/image_"+ostr.str()+".png", exibir);
-				cv::imwrite("Circles_Images/image_"+ostr.str()+".png", exibirCircles);
-				cv::imwrite("Vectors_Images/image_"+ostr.str()+".png", exibirTrajectories);
-			}
+//			if (i % 2 == 0) {
+//				cv::imwrite("Expansao_Images/image_"+ostr.str()+".png", exibir);
+//				cv::imwrite("Circles_Images/image_"+ostr.str()+".png", exibirCircles);
+//				cv::imwrite("Vectors_Images/image_"+ostr.str()+".png", exibirTrajectories);
+//			}
 			cv::waitKey(1);
 
 			int barWidth = 40;
