@@ -6,15 +6,15 @@
 On CMakeLists.txt fix the opencv path for your computer.
 
 Run
-'''bash
+```bash
 cmake .
-'''
+```
 to configure the compiler.
 
 Run
-'''bash
+```bash
 make
-''''
+```
 to compile the program.
 
 ## Usage
