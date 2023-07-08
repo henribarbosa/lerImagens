@@ -2,3 +2,7 @@
 
 Files/
 PostFiles/
+
+## Cache files:
+
+CMakeCache.txt
