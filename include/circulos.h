@@ -16,7 +16,11 @@
 #include "circles_data.h"
 #include "read_control.h"
 
+// functions to find the particles
+
 void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>& plugs);
+
+// deprecated, did not worked
 
 cv::Mat quantizeImage(cv::Mat* image, int quantizationColors);
 

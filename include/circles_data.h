@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+// structure to store particles data through the programs
+
 struct circles_data
 {
 	float x{};

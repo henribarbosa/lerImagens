@@ -6,34 +6,37 @@
 #include <vector>
 #include <cmath>
 
+// Structure to store quantities in cells dividing the bed
+
 class eulerianField
 {
 private:
-	int NumberHeights, NumberWidths;
-	float Height, Width;
-	int* numberPoints = nullptr;
+	int NumberHeights, NumberWidths; // divisions of the bed
+	float Height, Width; // size of the bed
+	int* numberPoints = nullptr; // divisions calculated
 	float* Heights = nullptr;
 	float* Widths = nullptr;
-	std::string FieldName;
+	std::string FieldName; // name for saving the variable
 
-	void newFile();
-	void resetField();
+	void newFile(); // creates new file for saving
+	void resetField(); // reset the field for next frame
 
 public:
-	long double* Field = nullptr;
+	long double* Field = nullptr; // store the values
 
-	eulerianField(int NumberHeights, int NumberWidths, float Height, float Width, const char* fieldName);
-	eulerianField();
-	virtual ~eulerianField();
-	void clearMemory();
-	void addParticle(float fieldValue, float x, float y);
-	void consolidateField();
-	void writeFrame(int frameNumber);
-	float cellTop(int fieldAdress);
-	float cellBottom(int fieldAdress);
-	int fieldSize();
+	eulerianField(int NumberHeights, int NumberWidths, float Height, float Width, const char* fieldName); //create field with empty cells
+	eulerianField(); // create an empty field, to declare a variable
+	virtual ~eulerianField(); // virtual destructor
+	void clearMemory(); // frees the memory after saving
+	void addParticle(float fieldValue, float x, float y); // add a particle's quantity in the correct cell
+	void consolidateField(); // calculate averages in each cell
+	void writeFrame(int frameNumber); // write the current frame to saving file
+	float cellTop(int fieldAdress); // top position of a cell, to compare with a particle position
+	float cellBottom(int fieldAdress); // bottom position of a cell
+	int fieldSize(); // number of celss
 };
 
+// structure for saving particles velocities
 struct Velocity
 {
 	Velocity(float ui, float vi, int indexi)
@@ -44,6 +47,7 @@ struct Velocity
 	int index{};
 };
 
+// the same as previous, but modified for granular temperature calculations
 class eulerianFieldGranularTemp
 {
 private:

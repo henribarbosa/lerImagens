@@ -13,6 +13,8 @@
 #include "hough.h"
 #include "read_control.h"
 
+// Functions to calculate bed height, width, plugs and interface
+
 void altura(cv::Mat* image, cv::Mat* exibir, int& height);
 
 void firstPass(const char* path, int& bottom, int& right, int& left);
