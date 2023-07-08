@@ -1,49 +1,30 @@
+
+# Consider dependencies only in project.
+set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
+
 # The set of languages for which implicit dependencies are needed:
 set(CMAKE_DEPENDS_LANGUAGES
-  "CXX"
-  )
-# The set of files for implicit dependencies of each language:
-set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/altura.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/altura.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/auction.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/auction.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/circles_data.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/circles_data.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/circulos.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/circulos.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/eulerianField.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/eulerianFieldSimulation.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/hough.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/hough.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/lagrangian.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/lagrangian.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/lerImagem.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/mixing.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/mixing.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/preProcess.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/preProcess.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/read_control.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/read_control.cpp.o"
-  "/home/user/Área de Trabalho/Teste/lerImagem/src/simulation.cpp" "/home/user/Área de Trabalho/Teste/lerImagem/CMakeFiles/lerImagem.dir/src/simulation.cpp.o"
-  )
-set(CMAKE_CXX_COMPILER_ID "GNU")
-
-# The include file search paths:
-set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/home/user/opencv/build"
-  "/home/user/opencv/include"
-  "/home/user/opencv/modules/core/include"
-  "/home/user/opencv/modules/flann/include"
-  "/home/user/opencv/modules/imgproc/include"
-  "/home/user/opencv/modules/ml/include"
-  "/home/user/opencv/modules/photo/include"
-  "/home/user/opencv/modules/dnn/include"
-  "/home/user/opencv/modules/features2d/include"
-  "/home/user/opencv/modules/imgcodecs/include"
-  "/home/user/opencv/modules/videoio/include"
-  "/home/user/opencv/modules/calib3d/include"
-  "/home/user/opencv/modules/highgui/include"
-  "/home/user/opencv/modules/objdetect/include"
-  "/home/user/opencv/modules/stitching/include"
-  "/home/user/opencv/modules/ts/include"
-  "/home/user/opencv/modules/video/include"
-  "/home/user/opencv/modules/gapi/include"
   )
 
-# Targets to which this target links.
-set(CMAKE_TARGET_LINKED_INFO_FILES
+# The set of dependency files which are needed:
+set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/henrique/Desktop/Testes/lerImagens/src/altura.cpp" "CMakeFiles/lerImagem.dir/src/altura.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/altura.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/auction.cpp" "CMakeFiles/lerImagem.dir/src/auction.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/auction.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/circles_data.cpp" "CMakeFiles/lerImagem.dir/src/circles_data.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/circles_data.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/circulos.cpp" "CMakeFiles/lerImagem.dir/src/circulos.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/circulos.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/eulerianField.cpp" "CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/eulerianField.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/eulerianFieldSimulation.cpp" "CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/eulerianFieldSimulation.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/hough.cpp" "CMakeFiles/lerImagem.dir/src/hough.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/hough.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/lagrangian.cpp" "CMakeFiles/lerImagem.dir/src/lagrangian.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/lagrangian.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/lerImagem.cpp" "CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/lerImagem.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/mixing.cpp" "CMakeFiles/lerImagem.dir/src/mixing.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/mixing.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/preProcess.cpp" "CMakeFiles/lerImagem.dir/src/preProcess.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/preProcess.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/read_control.cpp" "CMakeFiles/lerImagem.dir/src/read_control.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/read_control.cpp.o.d"
+  "/home/henrique/Desktop/Testes/lerImagens/src/simulation.cpp" "CMakeFiles/lerImagem.dir/src/simulation.cpp.o" "gcc" "CMakeFiles/lerImagem.dir/src/simulation.cpp.o.d"
+  )
+
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
   )
 
 # Fortran module output directory.
