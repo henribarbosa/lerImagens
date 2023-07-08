@@ -22,7 +22,12 @@ to compile the program.
 Before using, it's necessary to create 2 folders in the main folder:
 * Files
 * PostFiles
-
+```bash
+mkdir Files
+mkdir PostFiles
+```
 They will be used to store generated files
+
+The thresholds.txt have the numerical values that control the behavior of the program, so change it as necessary to have the correct settings for your data.
 
 Usage is descripted in with the -h option
