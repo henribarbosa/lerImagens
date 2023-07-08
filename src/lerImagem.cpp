@@ -18,7 +18,7 @@
 #include "../include/simulation.h"
 
 
-#if defined _WIN32
+#if defined _WIN32 // library and command to read windows file system
 #include <filesystem>
 
 std::vector<std::string> globVector(const std::string& pattern){
@@ -33,7 +33,7 @@ std::vector<std::string> globVector(const std::string& pattern){
     //globfree(&glob_result);
     return files;
 }
-#else
+#else // library and command to read linux file system
 #include <glob.h>
 
 std::vector<std::string> globVector(const std::string& pattern){
@@ -50,6 +50,7 @@ std::vector<std::string> globVector(const std::string& pattern){
 }
 #endif
 
+// process simulation files of CFDEM@Coupling
 int SimulationProcess(std::string FramesPath, std::string Method, bool bidisperse)
 {
 	std::vector<std::string> files = globVector(FramesPath);
@@ -61,11 +62,13 @@ int SimulationProcess(std::string FramesPath, std::string Method, bool bidispers
 		simulation.readFile(file, Method, bidisperse);
 	}
 
+	return 0;
 }
 
+// Pre treatment of images for further processing
 int PreProcessing(std::string Method, std::string CalibrationPath, std::string ImagesPath)
 {
-	if (Method == "all")
+	if (Method == "all") // run all methods
 	{
 		std::vector<std::string> files = globVector(CalibrationPath);
 
@@ -75,25 +78,25 @@ int PreProcessing(std::string Method, std::string CalibrationPath, std::string I
 
 		SubtractMask(files);
 	}
-	else if (Method == "build_mask")
+	else if (Method == "build_mask") // build a mask of the background
 	{
 		std::vector<std::string> files = globVector(CalibrationPath);
 
 		MakeAveragePicture(files);
 	}
-	else if (Method == "apply_mask")
+	else if (Method == "apply_mask") // subtract the background of the images
 	{
 		std::vector<std::string> files = globVector(ImagesPath);
 
 		SubtractMask(files);
 	}
-	else if (Method == "binary")
+	else if (Method == "binary") // applies a threshold to images and makes it binary
 	{
 		std::vector<std::string> files = globVector(ImagesPath);
 
 		MakeBinary(files);
 	}
-	else if (Method == "rotate")
+	else if (Method == "rotate") // rotate image to appropriate angle for processing
 	{
 		std::vector<std::string> files = globVector(ImagesPath);
 
@@ -105,41 +108,48 @@ int PreProcessing(std::string Method, std::string CalibrationPath, std::string I
 
 int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 {
-	std::vector<std::string> files = globVector(ImagesPath);
-	lagrangian particle_track;
-	int bottom, right, left;
-	int height = 0, interfacePosition;
+	std::vector<std::string> files = globVector(ImagesPath); // files to process
+	lagrangian particle_track; // tracking particles
+	int bottom, right, left; // size of the bed
+	int height = 0, interfacePosition; // bed height and interface
 	double scale; // mm/pixel
 
+	// clear files before processing
 	int ret = system("rm Files/circulos_ant.txt");
 	ret = system("rm -r Files/Temp");
 	ret = system("mkdir Files/Temp");
+	// calculate bed size (find width and the bottom of the bed)
 	firstPass(files[0].c_str(), bottom, right, left);
 
-	control BedWidth("thresholds.txt", "BedWidth");
+	control BedWidth("thresholds.txt", "BedWidth"); // read the width of the bed [mm]
 	scale = BedWidth.returnThreshold() / (left - right);
+	// set variables for tracking
 	particle_track.setScale(scale);
 	particle_track.setBoundaries(bottom, left);
-	particle_track.startFields();
+	particle_track.startFields(); // create files for storing measures
 
-	Mixing mixing_track(bottom, left, scale);
+	Mixing mixing_track(bottom, left, scale); // calculate mixing in the bed
 	
 	if (Method == "expansion" || Method == "plugs" || Method == "all")
 	{
+		// File for saving the height of the bed for every frame
 		std::ofstream file;
 		file.open("Files/Alturas.txt",std::ios::trunc);
 		file << "";
 		file.close();
 
+		// File for saving the interface position
 		file.open("Files/Interface.txt", std::ios::trunc);
 		file << "";
 		file.close();
 
+		// Graphic window to display the bed expansion
 		cv::namedWindow("Expansao leito", cv::WINDOW_NORMAL);
 		cv::resizeWindow("Expansao leito", 1200,50);
 	}
 	if (Method == "plugs" || Method == "all")
 	{
+		// Save number of plugs and position
 		std::ofstream file;
 		file.open("Files/Plugs.txt", std::ios::trunc);
 		file << "";
@@ -148,14 +158,18 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 	if (Method == "temperature" || Method == "all")
 	{
 
+		// clear files
 		bool status = remove("circulos_ant.txt");
 
+		// graphic window to display detected particles
 		cv::namedWindow("detected circles", cv::WINDOW_NORMAL);
 		cv::resizeWindow("detected circles", 1200,50);
 
+		// graphic window to display velocity of the particles
 		cv::namedWindow("circles path", cv::WINDOW_NORMAL);
 		cv::resizeWindow("circles path", 1200,50);
 
+		// save the mixing index calculated with the particles in the different region
 		std::ofstream file;
 		file.open("Files/mixing_number.txt", std::ios::trunc);
 		file << "";
@@ -163,19 +177,22 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 
 	}
 
-	if (Method == "expansion")
+	if (Method == "expansion") //calculate only the expansion
 	{
 		for (int i = 0; i < files.size(); i++)
 		{
+			// gray scale image for faster processing and color to display visual aid
 			cv::Mat image = cv::imread(files[i].c_str(), cv::IMREAD_GRAYSCALE);
 			cv::Mat exibir(image.rows, image.cols, CV_8UC3);
 			cv::cvtColor(image, exibir, cv::COLOR_GRAY2RGB);
 
+			// calculate highest position of a particle
 			altura(&image, &exibir, height);
+			// crop image for the region of interest for faster processing
 			cv::Rect bed(height, right, bottom - height, left - right);
 			//interface(&image, &exibir, bed, interfacePosition);
 
-			if (bidisperse)
+			if (bidisperse) // calculation of interface (deprecated)
 			{
 				cv::Point rightInterface, leftInterface;
 //				interfaceNonPerpendicular(&image, &exibir, bed, leftInterface, rightInterface);
@@ -190,6 +207,7 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 				file.close();
 			}
 
+			// display expansion with visual aid
 			cv::imshow("Expansao leito", exibir);
 
 			cv::waitKey(1);
@@ -197,72 +215,89 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 			memcpy(tempo, files[i].c_str() + strlen(files[i].c_str()) - 9, 5);
 			tempo[5] = 0;
 
+			// write file to save data
 			std::ofstream file;
 			file.open("Files/Alturas.txt",std::ios::app);
 			file << tempo << "   " << (bottom - height) * scale << std::endl;
 			file.close();
 		}
 	}
-	else if (Method == "plugs")
+	else if (Method == "plugs") // calculate only the plugs
 	{
 		for (int i = 0; i < files.size(); i++)
 		{
+			// gray scale image for processing and color for displaying visual aid
 			cv::Mat image = cv::imread(files[i].c_str(), cv::IMREAD_GRAYSCALE);
 			cv::Mat exibir;
 			cv::cvtColor(image, exibir, cv::COLOR_GRAY2RGB);
 		
+			// calculate height and crop image for faster processing
 			altura(&image, &exibir, height);
 			cv::Rect bed(height, right, bottom - height, left - right);
-			std::vector<cv::Rect> rectangles;
-			plugs(&image, &exibir, bed, rectangles, bottom, scale);
+			std::vector<cv::Rect> rectangles; // list of plugs saved as rectangles
+			plugs(&image, &exibir, bed, rectangles, bottom, scale); // find the plug
 
+			// display visual aid
 			cv::imshow("Expansao leito", exibir);
 			cv::waitKey(1);
 
 		}
 	}
-	else if (Method == "temperature")
+	else if (Method == "temperature") // calculate only granular temperature
 	{
 		for (int i = 0; i < files.size(); i++)
 		{
+
+			// gray scale image for processing and color for displaying visual aid
 			cv::Mat image = cv::imread(files[i].c_str(), cv::IMREAD_GRAYSCALE);
 			cv::Mat exibir(image.rows, image.cols, CV_8UC3);
 			cv::cvtColor(image, exibir, cv::COLOR_GRAY2RGB);
 			cv::Mat exibirTrajectories; exibir.copyTo(exibirTrajectories);
 
+			// find height and crop image
 			altura(&image, &exibir, height);
 			cv::Rect bed(height, right, bottom - height, left - right);
+			// list of plugs
 			std::vector<cv::Rect> rectangles;
 			plugs(&image, &exibir, bed, rectangles, bottom, scale);
 
+			// find the visible particles
 			circulos(&image, &exibir, bed, rectangles);
 			//cv::Mat blackWhite;
 			//cv::inRange(image(bed), 200, 255, blackWhite);
 			//generalMoviment(&blackWhite, &exibir, &bed, rectangles);
+
+			// reads thresholds
 			control LagrangianThreshold("thresholds.txt","AuctionMaxDist");
+
+			// tracks the particles
 			auction pathFinder(LagrangianThreshold.returnThreshold());
 			pathFinder.run(&exibirTrajectories, particle_track);
 
+			// display visual aid
 			cv::imshow("detected circles", exibir);
 			cv::imshow("circles path", exibirTrajectories);
 			cv::waitKey(1);
 		}
 	}
-	else if (Method == "all")
+	else if (Method == "all") // run every method available
 	{
 		for (int i = 0; i < files.size(); i++)
 		{
+			// gray scale image for processing and color to display visual aid
 			cv::Mat image = cv::imread(files[i].c_str(), cv::IMREAD_GRAYSCALE);
 			cv::Mat exibir(image.rows, image.cols, CV_8UC3);
 			cv::cvtColor(image, exibir, cv::COLOR_GRAY2RGB);
 			cv::Mat exibirCircles; exibir.copyTo(exibirCircles);
 			cv::Mat exibirTrajectories; exibir.copyTo(exibirTrajectories);
 			
+			// find bed height and crop the image for processing
 			altura(&image, &exibir, height);
 			cv::Rect bed(height, right, bottom - height, left - right);
 			//interface(&image, &exibir, bed, interfacePosition);
 			if (bidisperse)
 			{
+				// calculate mixing and find interface (interface not working)
 				cv::Point rightInterface, leftInterface;
 				mixing_track.interfaceMixing(&exibir, leftInterface, rightInterface, i);
 //				interfaceNonPerpendicular(&image, &exibir, bed, leftInterface, rightInterface);
@@ -270,12 +305,14 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 				float interfaceHeight = (bottom - (rightInterface.x + leftInterface.x)/2.0) * scale;
 				float interfaceAngle = std::atan( float(rightInterface.x - leftInterface.x) / float(rightInterface.y - leftInterface.y) );
 
+				// save result files
 				std::ofstream file;
 				file.open("Files/Interface.txt", std::ios::app);
 				file << interfaceHeight << "   " << interfaceAngle << std::endl;
 				file.close();
 			}		
 
+			// find plug
 			std::vector<cv::Rect> rectangles;
 			plugs(&image, &exibir, bed, rectangles, bottom, scale);
 	
@@ -283,16 +320,19 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 			memcpy(tempo, files[i].c_str() + strlen(files[i].c_str()) - 9, 5);
 			tempo[5] = 0;
 
+			// save files
 			std::ofstream file;
 			file.open("Files/Alturas.txt",std::ios::app);
 			file << tempo << "   " << (bottom - height) * scale << std::endl;
 			file.close();
 	
+			// find particles and tracks then
 			circulos(&image, &exibirCircles, bed, rectangles);
 			control LagrangianThreshold("thresholds.txt","AuctionMaxDist");
 			auction pathFinder(LagrangianThreshold.returnThreshold());
 			pathFinder.run(&exibirTrajectories, particle_track);
 				
+			// display visual aid
 //			exibir = quantizeImage(&image, 3);
 			std::ostringstream ostr;
 			ostr << std::setfill('0') << std::setw(6) << i;
@@ -306,6 +346,7 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 //			}
 			cv::waitKey(1);
 
+			// progress bar indicator
 			int barWidth = 40;
 			float progress = ((float)i / (float)(files.size()-1));
 
@@ -329,6 +370,7 @@ int Processing(std::string ImagesPath, std::string Method, bool bidisperse)
 
 }
 
+// post processing with python (deprecated)
 int PostProcessing(std::string Method, std::string PostFolder)
 {
 	if (Method == "all")
@@ -351,6 +393,7 @@ int PostProcessing(std::string Method, std::string PostFolder)
 	return 0;
 }
 
+// main function
 int main(int argc, char** argv)
 {
 	//Define useful variaables
