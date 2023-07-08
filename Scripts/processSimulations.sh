@@ -12,6 +12,7 @@ while read line; do
 	#cp Thresholds_base.txt thresholds.txt
 	#sed -i "s/A1A/${number}/" thresholds.txt
 
+	cd ..
 	./lerImagem -m simulation -r all -p "${line}/post/dump_liggghts_run.*"
 	
 	cp -r PostFiles/ ${line}

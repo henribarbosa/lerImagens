@@ -14,6 +14,7 @@ while read line; do
 	#sed -i "s/A1A/${lower}/" thresholds.txt
 	#sed -i "s/A2A/${upper}/" thresholds.txt
 
+	cd ..
 	./lerImagem -m process -r all -t 0 -p "${line}/image_*.tif"
 	
 	cp -r Files/ ${line}

@@ -8,6 +8,7 @@ while read line; do
 	
 	echo \"${folder}/image_*.tif\" threshold: ${number}
 
+	cd ..
 	rm thresholds.txt
 	cp Thresholds_base.txt thresholds.txt
 	sed -i "s/A1A/${number}/" thresholds.txt
