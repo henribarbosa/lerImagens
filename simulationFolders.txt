@@ -1,7 +1,1 @@
 /media/dados0/Mestrado/Leito_Ar/Case_1.0
-/media/dados0/Mestrado/Leito_Ar/Case_1.05
-/media/dados0/Mestrado/Leito_Ar/Case_1.10
-/media/dados0/Mestrado/Leito_Ar/Case_1.15
-/media/dados0/Mestrado/Leito_Ar/Case_1.20
-/media/dados0/Mestrado/Leito_Ar/Case_1.25
-/media/dados0/Mestrado/Leito_Ar/Case_1.30
