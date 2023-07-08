@@ -1,5 +1,6 @@
 # lerImagens
 
+Program to identify and track particles in a narrow fluidized bed, along with calculating granular temperature, velocity profile, bed height, moment of solids, mixing.
 
 ## Instalation
 
