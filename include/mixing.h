@@ -13,24 +13,27 @@
 #include <fstream>
 #include <vector>
 
+// calculate mixing index of the bed
+
 class Mixing
 {
 private:
-		int bottom, left;
-		float scale;
-		void findInterface(cv::Point& leftInterface, cv::Point& rightInterface, int type, cv::Mat* exibir);
-		std::vector<cv::Point> concaveHull(int type);
-		cv::Mat particlesType1, particlesType2;
-		cv::Mat hullType1, hullType2;
+		int bottom, left; // bed size
+		float scale; // bed scale
+		void findInterface(cv::Point& leftInterface, cv::Point& rightInterface, int type, cv::Mat* exibir); // look for interface
+		std::vector<cv::Point> concaveHull(int type); // region that encompass all particles of a type
+		cv::Mat particlesType1, particlesType2; // binary representation of the 2 particles types, a 1 for each particle in its center
+		cv::Mat hullType1, hullType2; // binary representation of the 2 regions
 public:
 
-		eulerianField MixingField;
-		std::vector<circles_data> particles;
+		eulerianField MixingField; // mixing saved in eulerian cells
+		std::vector<circles_data> particles; // particles positions
 		
-		Mixing(int bottom, int left, float scale);
-		void interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Point& rightInterface, int frame);
+		Mixing(int bottom, int left, float scale); // start the field
+		void interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Point& rightInterface, int frame); // another measure of mixing
 };
 
+// functions for ordering vectors
 template <typename T> void merge_height(int* array, int const left, int const mid, int const right, std::vector<T>& vector);
 
 template <typename T> void merge_angle(int* array, int const left, int const mid, int const right, std::vector<T>& vector, T reference);
@@ -43,6 +46,7 @@ template <typename T> void orderVectors_height(std::vector<T>& particles);
 
 template <typename T> void orderVectors_angle(std::vector<T>& particles, T reference);
 
+// functions to build the concave hull, finding the higher particles and comparing the turns to aprove the hull construction
 bool compare_height(circles_data c1, circles_data c2);
 
 int compare_angle(circles_data c1, circles_data c2, circles_data reference);

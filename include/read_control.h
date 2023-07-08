@@ -8,11 +8,15 @@
 #include <cmath>
 #include <iostream>
 
+// save numerical parameters
+
 struct parameter
 {
     float threshold{};
     std::string name{};
 };
+
+// read control (thresholds) file for numerical parameters
 
 class control
 {
@@ -20,7 +24,7 @@ private:
     parameter Param;
 
 public:
-    control(const std::string& path, const std::string& fieldName);
+    control(const std::string& path, const std::string& fieldName); // find the correct parameter
     ~control();
-    float returnThreshold();
+    float returnThreshold(); // returns the numerical value
 };
