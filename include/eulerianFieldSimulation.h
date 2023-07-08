@@ -7,6 +7,8 @@
 #include <vector>
 #include <cmath>
 
+// same as eulerianField.h but for simulation results (works in 3 dimensions)
+
 class eulerianFieldSimulation
 {
 public:
