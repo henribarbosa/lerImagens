@@ -1,14 +1,18 @@
 #include "../include/eulerianField.h"
 
+// functions for the eulerian field class
+
+// start empty field
 eulerianField::eulerianField()
 	:NumberHeights(0), NumberWidths(0), Height(0), Width(0), FieldName("")
 {}
 
+// build field with correct number of divisions
 eulerianField::eulerianField(int InputNumberHeights, int InputNumberWidths, float InputHeight, float InputWidth, const char* InputFieldName)
 	:NumberHeights(InputNumberHeights), NumberWidths(InputNumberWidths), Height(InputHeight), Width(InputWidth), FieldName(InputFieldName)
 {
-	Field = new long double[NumberHeights*NumberWidths];
-	numberPoints = new int[NumberHeights*NumberWidths];
+	Field = new long double[NumberHeights*NumberWidths]; // stored quantity
+	numberPoints = new int[NumberHeights*NumberWidths]; // number of particles in each cell
 	Heights = new float[NumberHeights];
 	Widths = new float[NumberWidths];
 
@@ -21,6 +25,7 @@ eulerianField::eulerianField(int InputNumberHeights, int InputNumberWidths, floa
 		*initValue = 0;
 	}
 
+	// create list of division positions
 	float HeightStep = Height/NumberHeights;
 	float WidthStep = Width/NumberWidths;
 
@@ -40,11 +45,13 @@ eulerianField::eulerianField(int InputNumberHeights, int InputNumberWidths, floa
 	newFile();
 }
 
+// virtual destructor
 eulerianField::~eulerianField()
 {
 	//clearMemory();
 }
 
+// delete stored informations
 void eulerianField::resetField()
 {
 	for (long double* initValue = Field; initValue != Field + NumberHeights*NumberWidths; initValue++)
@@ -57,6 +64,7 @@ void eulerianField::resetField()
 	}
 }
 
+// frees memory after use
 void eulerianField::clearMemory()
 {
 	delete[] Field;
@@ -65,6 +73,7 @@ void eulerianField::clearMemory()
 	delete[] Widths;
 }
 
+// takes the average in each cell
 void eulerianField::consolidateField()
 {
 	for (int i = 0; i < NumberHeights*NumberWidths; ++i)
@@ -78,6 +87,7 @@ void eulerianField::consolidateField()
 	}
 }
 
+// create new file for store informations with appropriate header
 void eulerianField::newFile()
 {
 	std::fstream file;
@@ -99,6 +109,7 @@ void eulerianField::newFile()
 	file.close();
 }
 
+// save the informations of current frame
 void eulerianField::writeFrame(int FrameNumber)
 {
 	std::fstream file;
@@ -121,10 +132,12 @@ void eulerianField::writeFrame(int FrameNumber)
 	resetField();
 }
 
+// put the information of a particle in the correct cell
 void eulerianField::addParticle(float fieldValue, float x, float y)
 {
 	int heightIndex = 0, widthIndex = 0;
 	
+	// iterates to find the correct cell height
 	for (; heightIndex < NumberHeights; ++heightIndex)
 	{
 		if ( x < Heights[heightIndex])
@@ -133,6 +146,8 @@ void eulerianField::addParticle(float fieldValue, float x, float y)
 		}
 	}
 	heightIndex--;
+
+	// the same for the width
 	for (; widthIndex < NumberWidths; ++widthIndex)
 	{
 		if ( y < Widths[widthIndex])
@@ -144,11 +159,13 @@ void eulerianField::addParticle(float fieldValue, float x, float y)
 	
 	//std::cout << x << " , " << y << " : " << heightIndex << " , " << widthIndex << std::endl;
 
+	// sum the data in the cell and add a particle in the cell counter
 	Field[heightIndex*NumberWidths + widthIndex] = Field[heightIndex*NumberWidths + widthIndex] + fieldValue;
 	numberPoints[heightIndex*NumberWidths + widthIndex]++;
 	//std::cout << heightIndex << " , " << widthIndex << " : " << Field[heightIndex*NumberWidths+widthIndex] << " , " << numberPoints[heightIndex*NumberWidths+widthIndex] << std::endl;
 }
 
+// same functions but for granular temperature
 eulerianFieldGranularTemp::eulerianFieldGranularTemp()
 	:NumberHeights(0), NumberWidths(0), Height(0), Width(0), FieldName("")
 {}
@@ -235,6 +252,7 @@ void eulerianFieldGranularTemp::clearMemory()
 	delete[] Widths;
 }
 
+// only change, calculate average velocity to calculate granular temperature
 void eulerianFieldGranularTemp::consolidateField()
 {
 	for (int i = 0; i < NumberHeights*NumberWidths; ++i)
@@ -250,7 +268,7 @@ void eulerianFieldGranularTemp::consolidateField()
 		{
 			if (Velocity.index == i)
 			{
-				Temperature[i] = Temperature[i] + pow(Velocity.u - AvgU,2) + pow(Velocity.v - AvgV,2);
+				Temperature[i] = Temperature[i] + pow(Velocity.u - AvgU,2)/2.0 + pow(Velocity.v - AvgV,2)/2.0;
 			}
 		}
 		Temperature[i] = Temperature[i] / numberPoints[i];
@@ -328,6 +346,7 @@ void eulerianFieldGranularTemp::addParticle(float u, float v, float x, float y)
 	//std::cout << heightIndex << " , " << widthIndex << " : " << Field[heightIndex*NumberWidths+widthIndex] << " , " << numberPoints[heightIndex*NumberWidths+widthIndex] << std::endl;
 }
 
+// auxiliary function to cell positions
 float eulerianField::cellTop(int fieldAdress)
 {
 	int height = fieldAdress / NumberWidths;
@@ -343,6 +362,7 @@ float eulerianField::cellBottom(int fieldAdress)
 	return Heights[height];
 }
 
+// number of cells
 int eulerianField::fieldSize()
 {
 	return NumberHeights * NumberWidths;
