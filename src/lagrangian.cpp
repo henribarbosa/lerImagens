@@ -1,26 +1,31 @@
 #include "../include/lagrangian.h"
 
+// tracking the particles
+
+// series of writing functions to improve performance in writing files of the tracked particles
+// auxiliary function to write values in a specific line of the file
 void GotoLine(std::fstream& infile, std::fstream& outfile, int* num_line)
 {
-	if (*num_line == 0)
+	if (*num_line == 0) // first line
 	{
 		return;
 	}
 	std::string line;
-	int buf_ini = infile.tellg();
+	int buf_ini = infile.tellg(); // start position for copying
 	int buf_size = infile.tellg();
 	for (int i = 0; i < *num_line; ++i)
 	{
 		std::getline(infile,line);
-		buf_size = infile.tellg();
+		buf_size = infile.tellg(); // end position for copying
 	}
 
 	char* buffer = (char*) malloc((buf_size - buf_ini)*sizeof(char));
 	infile.seekg(buf_ini);
 	infile.read(buffer, buf_size - buf_ini);
-	outfile.write(buffer, buf_size - buf_ini);
+	outfile.write(buffer, buf_size - buf_ini); // copy the file to auxiliary file
 }
 
+// append function
 void CopyToFinal(std::fstream& infile, std::fstream& outfile)
 {
 	outfile << infile.rdbuf();
@@ -31,19 +36,23 @@ void CopyToFinal(std::fstream& infile, std::fstream& outfile)
 	//}
 }
 
+// set scale for the image
 void lagrangian::setScale(float InputScale)
 {
 	scale = InputScale;
 }
 
+// set the boundaries of the bed
 void lagrangian::setBoundaries(int InputBottom, int InputLeft)
 {
 	bottom = InputBottom;
 	left = InputLeft;
 }
 
+// start the eulerian field that will be used
 void lagrangian::startFields()
 {
+	// read the size of the bed
 	control BedWidth("thresholds.txt", "BedWidth");
 	float bedWidth = BedWidth.returnThreshold();
 	//Temperature = eulerianField(30,3,bottom*scale,3,"GranularTemperature");
@@ -54,6 +63,7 @@ void lagrangian::startFields()
 	massFluxY = eulerianField(50,5,bottom*scale,bedWidth,"massFluxY");
 }
 
+// header of the file for tracking
 void lagrangian::createFile()
 {
 	//std::cout << "New file" << std::endl;
@@ -67,6 +77,7 @@ void lagrangian::createFile()
 	file.close();
 }
 
+// save the position of one particle
 void lagrangian::writePoint(const float x, const float y, const float z)
 {
 	pointsFile.open("Files/lagrangian_points.txt", std::ios::out | std::ios::in);
@@ -78,7 +89,7 @@ void lagrangian::writePoint(const float x, const float y, const float z)
 	std::strcpy(charNumber,ostr.str().c_str());
 
 	pointsFile.seekg(15u);
-	pointsFile.write(charNumber, 10);
+	pointsFile.write(charNumber, 10); // update number of points in header
 	pointsFile.close();
 
 	//std::fstream outfile;
@@ -99,11 +110,12 @@ void lagrangian::writePoint(const float x, const float y, const float z)
 	//std::rename("Files/replace_points.txt","Files/lagrangian_points.txt");
 
 	pointsFile.open("Files/lagrangian_points.txt",std::ios::app);
-	pointsFile << last_point << " : " << (bottom - x)*scale << " " << (left - y)*scale << " " << z*scale << std::endl;
+	pointsFile << last_point << " : " << (bottom - x)*scale << " " << (left - y)*scale << " " << z*scale << std::endl; // append point
 	pointsFile.close();
 	last_point++; //one more point
 }	
 
+// add new particle in tracking file
 void lagrangian::writeNewParticle()
 {
 	file.open("Files/lagrangian.txt", std::ios::out | std::ios::in);
@@ -115,7 +127,7 @@ void lagrangian::writeNewParticle()
 	std::strcpy(charNumber,ostr.str().c_str());
 
 	file.seekg(18u);
-	file.write(charNumber, 10);
+	file.write(charNumber, 10); // update number of particles
 	file.close();
 
 	//file.open("Files/lagrangian.txt", std::ios::out | std::ios::in);
@@ -151,14 +163,15 @@ void lagrangian::writeNewParticle()
 	//file.close();
 	
 	file.open("Files/lagrangian.txt", std::ios::out | std::ios::app);
-	file << last_label << " :" << std::endl;
+	file << last_label << " :" << std::endl; // append particle
 	file.close();
 
-	last_label++;
+	last_label++; // one more particle
 
 	//std::rename("Files/replace.txt","Files/lagrangian.txt");
 }	
 
+// write multiple particles at the same pass to avoid file copying
 void lagrangian::writeToMultipleParticles(std::vector<int>& orderedParticles, std::vector<float>& orderedX, std::vector<float>& orderedY, std::vector<float>& orderedZ)
 {
 	file.open("Files/lagrangian.txt", std::ios::in);
@@ -199,6 +212,7 @@ void lagrangian::writeToMultipleParticles(std::vector<int>& orderedParticles, st
 	std::rename("Files/replace.txt","Files/lagrangian.txt");
 }
 
+// writes one file per frame to avoid copying files
 void lagrangian::SingleFile(int frame, std::vector<int>& orderedParticles, std::vector<float>& orderedX, std::vector<float>& orderedY, std::vector<float>& orderedZ)
 {
 	std::string number = std::to_string(last_label+1);
@@ -217,6 +231,7 @@ void lagrangian::SingleFile(int frame, std::vector<int>& orderedParticles, std::
 	file.close();
 }
 
+// same as previous but for particles found with the Kalmann filter
 void lagrangian::SingleFileDouble(int frame, std::vector<int>& orderedParticles, std::vector<std::pair<float,float>>& orderedX, std::vector<std::pair<float,float>>& orderedY,
 	std::vector<std::pair<float,float>>& orderedZ)
 {
@@ -239,6 +254,8 @@ void lagrangian::SingleFileDouble(int frame, std::vector<int>& orderedParticles,
 
 	file.close();
 }
+
+// Kalmann filter particles writing to file
 void lagrangian::writeToMultipleParticlesDouble(std::vector<int>& orderedParticles, std::vector<std::pair<float,float>>& orderedX, std::vector<std::pair<float,float>>& orderedY,
 	std::vector<std::pair<float,float>>& orderedZ)
 {
@@ -284,6 +301,7 @@ void lagrangian::writeToMultipleParticlesDouble(std::vector<int>& orderedParticl
 	std::rename("Files/replace.txt","Files/lagrangian.txt");
 }
 
+// add new point to a tracked particle
 void lagrangian::writeToParticle(int& particle, const float x, const float y, const float z)
 {
 	file.open("Files/lagrangian.txt", std::ios::in | std::ios::out);
@@ -308,6 +326,7 @@ void lagrangian::writeToParticle(int& particle, const float x, const float y, co
 	writePoint(x,y,z);
 }
 
+// glob function to find files with the given pattern
 static std::vector<std::string> globVector(const std::string& pattern){
     glob_t glob_result;
 	//const std::filesystem::path ImagesPath{ pattern };
@@ -321,6 +340,7 @@ static std::vector<std::string> globVector(const std::string& pattern){
     return files;
 }
 
+// merge the files saved per frame in one tracking file
 void lagrangian::mergeFiles()
 {
 	std::cout << "Merging files" << std::endl;
@@ -407,6 +427,7 @@ void lagrangian::mergeFiles()
 	file.close();
 }
 
+// process frame 0, create labels for all particles
 void lagrangian::firstPass(std::vector<circles_data>& points)
 {
 	createFile();
@@ -437,9 +458,10 @@ void lagrangian::firstPass(std::vector<circles_data>& points)
 	SingleFile(0,labelsWrite,xWrite,yWrite,zWrite);
 }
 
+// process frames to update labels and add points to tracked particles
 void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points, std::vector<circles_data>& pastPoints, int* lines_assignment, int lines_size)
 {
-	frame++;
+	frame++; // update frame
 
 	//for (int i = 0; i < labels.size(); i++)
 	//	std::cout << labels[i] << " ";
@@ -448,6 +470,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	//	std::cout << lines_assignment[i] << " ";
 	//std::cout << std::endl;
 
+	// lists of labels to be used
 	std::vector<int> new_labels; new_labels.reserve(points.size());
 	std::vector<std::pair<float,float>> possiblePointsNew; possiblePointsNew.reserve(points.size());
 	std::vector<int> possiblePointsPositionNew; possiblePointsPositionNew.reserve(points.size());
@@ -456,25 +479,30 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	std::vector<int> kalmanLabelsNew; kalmanLabelsNew.reserve(points.size());
 	std::vector<std::pair<float,float>> singleParticlesNew;
 
+	// vectors to order to faster writing
 	std::vector<int> orderedParticles;
 	std::vector<int> orderedParticlesDouble;
 	std::vector<float> orderedX, orderedY, orderedZ;
 	std::vector<std::pair<float,float>> orderedXDouble, orderedYDouble, orderedZDouble;
 
+	// list of labels already taken
 	usedlabels.clear();
 	usedlabels.reserve(labels.size());
 	for (int i = 0; i < labels.size(); i++)
 		usedlabels.push_back(false);
 
+	// iterates over connections
 	for (int i = 0; i < lines_size; ++i)
 	{
-		if (lines_assignment[i] == -1)
+		if (lines_assignment[i] == -1) // untracked particle
 			continue;
-		else 
+		else // tracked particle
 		{
 			//writeToParticle((labels[lines_assignment[i]]) , points[i].x, points[i].y, 0);
+			// project points to find possible lost particles
 			int xProjected = 2*points[i].x - pastPoints[lines_assignment[i]].x;
 			int yProjected = 2*points[i].y - pastPoints[lines_assignment[i]].y;
+			// project positions with de Kalmann filter
 			int xKalman = 3*points[i].x - 2*pastPoints[lines_assignment[i]].x;
 			int yKalman = 3*points[i].y - 2*pastPoints[lines_assignment[i]].y;
 			
@@ -485,9 +513,11 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 			kalmanMidlePointsNew.push_back({xProjected, yProjected});
 
 //			std::cout << i << " , " << lines_assignment[i] << std::endl;
+			// visual aid
 			makeFigureUpdate(exibir, points[i], pastPoints[lines_assignment[i]], last_label);
 
-			if (labels[lines_assignment[i]] <= 0)
+			// update labels
+			if (labels[lines_assignment[i]] <= 0) // particle found in Kalmann filter
 			{
 				int index = 1 - labels[lines_assignment[i]];
 				kalmanLabelsNew.push_back(last_label);
@@ -498,7 +528,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 				new_labels.push_back(last_label);
 				last_label++;
 			}
-			else
+			else // regular tracking
 			{
 				kalmanLabelsNew.push_back(labels[lines_assignment[i]]);
 			
@@ -509,20 +539,22 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 				new_labels.push_back(labels[lines_assignment[i]]);
 			}	
 
+			// add particle to eulerian fileds
 			Temperature.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale, -1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale, (bottom-points[i].x)*scale, (left-points[i].y)*scale);
 			VelocityX.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			VelocityY.addParticle(-1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			massFluxX.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			massFluxY.addParticle(-1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			
-			usedlabels[lines_assignment[i]] = true;
+			usedlabels[lines_assignment[i]] = true; // reserve label
 		}
 	}
 	for (int i = 0; i < lines_size; ++i)
 	{
-		if (lines_assignment[i] == -1)
+		if (lines_assignment[i] == -1) // untracked particle
 		{
 			bool foundCorrespondent = false;
+			// look for particles near the possible points of last frame
 			for (int j = 0; j < possiblePoints.size(); j++)
 			{
 				if (possiblePoints[j].first == 0)
@@ -532,7 +564,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 				int dx = points[i].x - possiblePoints[j].first;
 				int dy = points[i].y - possiblePoints[j].second;
 				float dist = sqrt(pow(dx,2)+pow(dy,2));
-				if (dist < 3)
+				if (dist < 3) // if finds one, follow the same steps as previous
 				{
 					//std::cout << "Entered " << labels.size() << " , " << possiblePoints.size() << " : " << j << " , " << labels[j] << std::endl;
 					orderedParticles.push_back(labels[j]);
@@ -575,7 +607,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 				}
 			}
 
-			if (not foundCorrespondent)
+			if (not foundCorrespondent) // look for particles in the position of the Kalmann filter
 			{
 				for (int j = 0; j < kalmanPoints.size(); j++)
 				{
@@ -584,14 +616,14 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 					int dx = points[i].x - kalmanPoints[j].first;
 					int dy = points[i].y - kalmanPoints[j].second;
 					float dist = sqrt(pow(dx,2)+pow(dy,2));
-					if (dist < 3)
+					if (dist < 3) // if find follows previous steps
 					{
 						bool skip = false;
 						for (int k = 0; k < labels.size(); k++)
 						{
 							if (labels[k] == kalmanLabel[j] && usedlabels[k])
 							{
-								skip = true;
+								skip = true; // skip if particle is already tracked
 								break;
 							}
 						}
@@ -666,7 +698,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 				//orderedY.push_back(points[i].y);
 				//orderedZ.push_back(0);
 				//last_label++;
-				new_labels.push_back(-1*singleParticlesNew.size());
+				new_labels.push_back(-1*singleParticlesNew.size()); // untracked particles have negative labels
 				//possiblePointsNew.push_back({0,0});
 				//possiblePointsPositionNew.push_back(0);
 				//kalmanPointsNew.push_back({0,0});
@@ -693,14 +725,17 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	//	//makeFigureNew(exibir, current, last_label);
 	//}
 
+	// order vectors for writing
 	orderVectors(orderedParticles, orderedX, orderedY, orderedZ);
 	//writeToMultipleParticles(orderedParticles, orderedX, orderedY, orderedZ);
 	SingleFile(frame, orderedParticles, orderedX, orderedY, orderedZ);
 
+	// order vectors for writing
 	orderVectors(orderedParticlesDouble, orderedXDouble, orderedXDouble, orderedZDouble);
 	//writeToMultipleParticlesDouble(orderedParticlesDouble, orderedXDouble, orderedYDouble, orderedZDouble);
 	SingleFileDouble(frame, orderedParticlesDouble, orderedXDouble, orderedYDouble, orderedZDouble);
 
+	// consolidate measures and write them
 	Temperature.consolidateField();
 	Temperature.writeFrame(frame);
 	VelocityX.consolidateField();
@@ -710,6 +745,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	massFluxX.writeFrame(frame);
 	massFluxY.writeFrame(frame);
 
+	// update lists
 	labels = new_labels;
 	possiblePointsPositions = possiblePointsPositionNew;
 	possiblePoints = possiblePointsNew;
@@ -719,6 +755,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	singlePoints = singleParticlesNew;
 }
 
+// auxiliary function
 float lagrangian::velocitySquared(circles_data& p1, circles_data& p2)
 {
 	float dx2 = pow((p1.x - p2.x)*scale, 2);
@@ -726,6 +763,7 @@ float lagrangian::velocitySquared(circles_data& p1, circles_data& p2)
 	return dx2 + dy2;
 }
 
+// sorting functions for merge sorting
 void lagrangian::merge(int* array, int const left, int const mid, int const right, std::vector<int>& particles)
 {
 	auto const subArrayOne = mid - left + 1;
@@ -815,12 +853,14 @@ void lagrangian::orderVectors(std::vector<int>& particles, std::vector<T>& x, st
 	z = returnZ;
 }
 
+// visual aid for particles found in this frame
 void lagrangian::makeFigureNew(cv::Mat* exibir, circles_data& point, int& label)
 {
 	cv::circle(*exibir, cv::Point(point.x, point.y), 5, cv::Scalar(0,0,255), 0.1, 8);
 	//cv::putText(*exibir, std::to_string(label), cv::Point(point.x, point.y), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0,0,255));
 }
 
+// visual aid for tracked particles
 void lagrangian::makeFigureUpdate(cv::Mat* exibir, circles_data& point, circles_data& pastPoint, int& label)
 {
 //	std::cout << pastPoint.x << " , " << pastPoint.y << " -> " << point.x << " , " << point.y << std::endl;

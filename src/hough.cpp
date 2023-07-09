@@ -2,6 +2,9 @@
 
 #include "../include/hough.h"
 
+// implementation of a Hough transform to find interfaces
+// deprecated
+
 Hough::Hough(cv::Mat* image, int angleLines, int heightLines)
 	:originalImage(image), angleLines(angleLines), heightLines(heightLines)
 {
