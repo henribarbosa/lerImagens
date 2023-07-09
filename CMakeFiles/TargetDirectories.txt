@@ -1,3 +1,0 @@
-/home/henrique/Desktop/Testes/lerImagens/CMakeFiles/lerImagem.dir
-/home/henrique/Desktop/Testes/lerImagens/CMakeFiles/edit_cache.dir
-/home/henrique/Desktop/Testes/lerImagens/CMakeFiles/rebuild_cache.dir
