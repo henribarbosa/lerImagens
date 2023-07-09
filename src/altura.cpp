@@ -1,25 +1,28 @@
 #include "../include/altura.h"
 
-
+// Looks for the highest clear pixel
 void altura(cv::Mat* imagem, cv::Mat* exibir, int& height)
 {
 	double min, max;
+	// cut value to identify bright pixels
 	control HeightThreshold("thresholds.txt","HeightPixelThreshold");
 	double corte = HeightThreshold.returnThreshold();
 
+	// iterate over columns from the top (the vertical direction)
 	for (int i = 100; i < exibir->cols - 100; i++)
 	{
 		//std::cout << i << " : " << media[i] << std::endl;		
-		minMaxIdx(imagem->col(i), &min, &max);
-		if (max >= corte){
+		minMaxIdx(imagem->col(i), &min, &max); // brightest pixel in the column
+		if (max >= corte){ // stops at the first bright pixel
 			height = i;
 			break;
 		}
 	}
-
+	// visual aid
 	cv::line(*exibir, cv::Point(height, 0), cv::Point(height, exibir->rows), cv::Scalar(0, 255, 0), 3, 8);
 }
 
+// edge detection algorithm
 void GaussianDifference(cv::Mat& input, cv::Mat& output, int sigma, double k)
 // difference of gaussian blurs with sigma and k*sigma
 {
@@ -39,11 +42,14 @@ void firstPass(const char* path, int& bottom, int& right, int& left)
 	cv::Mat image = imread(path, cv::IMREAD_GRAYSCALE), show;
 	cv::cvtColor(image, show, cv::COLOR_GRAY2RGB);
 
+	// edge detection (highlights the edges of the bed)
 	GaussianDifference(image, image, 1, 3);
 
+	// minimum combined brightness of a line to be considered an edge
 	control MinimumSumThreshold("thresholds.txt","MinimumSumFindMargins");
 	int minimumSum = MinimumSumThreshold.returnThreshold();
 
+	// iterate from right
 	for (int i = 0; i < image.rows; i++)
 	{
 		cv::Rect slide(0, i, image.cols, 1);
@@ -56,6 +62,7 @@ void firstPass(const char* path, int& bottom, int& right, int& left)
 		}
 	}
 
+	// iterate from left
 	for (int i = image.rows-1; i > 0; i--)
 	{
 		cv::Rect slide(0, i, image.cols, 1);
@@ -68,6 +75,7 @@ void firstPass(const char* path, int& bottom, int& right, int& left)
 		}
 	}
 
+	// iterate from bottom
 	for (int i = image.cols-1; i > 0; i--)
 	{
 		cv::Rect slide(i, 0, 1, image.rows);
@@ -82,6 +90,7 @@ void firstPass(const char* path, int& bottom, int& right, int& left)
 
 	//std::cout << right << " , " << left << " , " << bottom << std::endl;
 
+	// visual aid
 	cv::imshow("Lines", image);
 	cv::waitKey(500);
 
@@ -94,17 +103,20 @@ void firstPass(const char* path, int& bottom, int& right, int& left)
 	cv::destroyWindow("Lines");
 }
 
+// looks for regions of high particle concentration and marks the plugs
 void plugs(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>& rectangles, int bottom, float scale)
 {
 	cv::Point offset(bed.x, bed.y);
-	cv::Mat bedImage = (*image)(bed);
+	cv::Mat bedImage = (*image)(bed); // crop the image to speed up calculation
 	cv::Mat blackWhite;
 
+	// threshold cut off to identify bright pixels (particles)
 	control binaryImageThreshold("thresholds.txt","BinaryImagePlugs");
 	cv::threshold(bedImage, blackWhite, binaryImageThreshold.returnThreshold() , 1, 0);
 	//cv::imshow("Plugs", blackWhite);
 	//cv::waitKey(0);
 
+	// minimum fraction of the bed occupied by particles to identify a plug
 	control minimumPlugFraction("thresholds.txt","MinimumPlugFraction");
 	control minimumPlugHeight("thresholds.txt","MinimumPlugHeight");
 	float avgThreshold = minimumPlugFraction.returnThreshold();
@@ -113,36 +125,38 @@ void plugs(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>
 	bool first = false, plug = false;
 	cv::Point firstPoint;
 
+	// iterate over columns (vertical direction)
 	for (int i = 0; i < bedImage.cols; i++)
 	{
-		cv::Rect slidingColumnWindow(i, 0, 1, bedImage.rows);
-		float windowAvg = cv::sum(blackWhite(slidingColumnWindow))[0] / slidingColumnWindow.area();
-		if (windowAvg >= avgThreshold)
+		cv::Rect slidingColumnWindow(i, 0, 1, bedImage.rows); // select only 1 column
+		float windowAvg = cv::sum(blackWhite(slidingColumnWindow))[0] / slidingColumnWindow.area(); // raction occupied by bright pixels
+		if (windowAvg >= avgThreshold) // is a plug
 		{
-			buffer += 1;
-			if (!first)
+			buffer += 1; // increase plug size
+			if (!first) // first point not stablished, it is the start of a plug
 			{
-				firstPoint = cv::Point(i, 0);
+				firstPoint = cv::Point(i, 0); // highest point in the plug
 				first = true;
 			}
 			else
 			{
-				if (buffer >= minHeightPlug)
+				if (buffer >= minHeightPlug) // can be considered a plug, is large enough
 				{
 					plug = true;
 				}
 			}
 		}
-		else
+		else // outside of a plug
 		{
-			first = false;
+			first = false; // restart measures
 			buffer = 0;
-			if (plug)
+			if (plug) // if the last column was a plug
 			{
+				// tries to merge with the previous plug to more consistent plug identification
 				bool merged = false;
 				//for (int j = 0; j < rectangles.size(); j++)
 				int j = rectangles.size()-1;
-				if (rectangles.size() != 0)
+				if (rectangles.size() != 0) // it is not the first plug
 				{
 					if (firstPoint.x - (rectangles[j].x + rectangles[j].width) < minHeightPlug)
 					{
@@ -151,7 +165,7 @@ void plugs(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>
 						merged = true;
 					}
 				}
-				if (not merged)
+				if (not merged) // add new plug to the list
 				{
 					rectangles.push_back(cv::Rect(firstPoint, cv::Point(i, bedImage.rows)));
 					plug = false;
@@ -159,7 +173,7 @@ void plugs(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>
 			}
 		}
 	}
-	if (plug)
+	if (plug) // tries to merge the last plug (if the last column was in a plug)
 	{
 		bool merged = false;
 		//for (int j = 0; j < rectangles.size(); j++)
@@ -184,6 +198,7 @@ void plugs(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>
 //		cv::rectangle(*exibir, rectangles[i] + offset, cv::Scalar(0, 0, 255), 2, 8);
 //	}
 
+	// save the data -> number of plugs : top bottom top bottom ... top bottom
 	std::ofstream file;
 	file.open("Files/Plugs.txt", std::ios::app);
 	file << rectangles.size() << " :";
@@ -195,6 +210,7 @@ void plugs(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>
 	file.close();
 }
 
+// tries to find the interface in the bidisperse case (deprecated)
 void interface(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, int& interfacePosition)
 {
 	cv::Mat process = (*image)(bed);
@@ -244,6 +260,7 @@ void interface(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, int& interfacePos
 
 }
 
+// tries to find the interface in the bidisperse case (deprecated)
 void interfaceNonPerpendicular(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, cv::Point& leftInterface, cv::Point& rightInterface)
 {
 	cv::Mat process = (*image)(bed);
