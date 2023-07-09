@@ -2,7 +2,7 @@
 
 Program to identify and track particles in a narrow fluidized bed, along with calculating granular temperature, velocity profile, bed height, moment of solids, mixing.
 
-## Instalation
+## Install
 
 On CMakeLists.txt fix the opencv path for your computer.
 
