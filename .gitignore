@@ -13,4 +13,5 @@ Makefile
 ## Program files
 
 lerImagem
+*.cpp.o
 
