@@ -1,5 +1,7 @@
 #include "../include/eulerianFieldSimulation.h"
 
+// function for 3D eulerian field, see eulerianField.cpp for more details
+
 eulerianFieldSimulation::eulerianFieldSimulation()
 	:NumberHeights(0), NumberWidths(0), Height(0), Width(0), FieldName("")
 {}
