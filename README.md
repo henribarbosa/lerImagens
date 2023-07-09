@@ -66,3 +66,7 @@ Processing should be done with:
 ```
 
 Indicating the Glob pattern for the simulation files, example: "/dados/dump_liggghts_run.*"
+
+## Scripts
+
+Author's scripts for batch processing.
