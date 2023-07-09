@@ -1,5 +1,8 @@
 #include "../include/simulation.h"
 
+// proces the simulation results of CFDEM
+
+// start the fields
 Simulation_data::Simulation_data()
 //	:frame(0),height(0),points(nullptr)
 {
@@ -20,6 +23,7 @@ Simulation_data::Simulation_data()
 	ParticleFraction = eulerianFieldPartFracSimulation(50,1,tube_height,tube_diameter,"PartcleFraction");
 }
 
+// reads the simulation files
 void Simulation_data::readFile(std::string filePath, std::string method, bool bidisperse)
 {
 	height = 0;

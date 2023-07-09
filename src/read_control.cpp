@@ -1,5 +1,7 @@
 #include "../include/read_control.h"
 
+// reads the thresholds file for numerical values
+
 control::control(const std::string& path, const std::string& fieldName)
 {
     Param.name = fieldName;
@@ -11,7 +13,7 @@ control::control(const std::string& path, const std::string& fieldName)
 
     while (std::getline(infile, line))
     {
-        if(line.find('#')+1) // ignora comentarios
+        if(line.find('#')+1) // ignore comments
         {
             int pos = line.find('#');
             //std::cout << pos << std::endl;
@@ -19,13 +21,13 @@ control::control(const std::string& path, const std::string& fieldName)
             //std::cout << line << std::endl;
         }
 
-        if (line.empty())  // pula linhas vazias
+        if (line.empty())  // ignore empty lines
         {
             //std::cout << "Passed" << std::endl;
             continue;
         }
 
-        if (line.find('{')+1) // inicio de declaracao de classe
+        if (line.find('{')+1) // start for class declaration
         {
             large_key = line.substr(0,line.find('{')) + ".";
             continue;
@@ -33,13 +35,13 @@ control::control(const std::string& path, const std::string& fieldName)
             
         }
 
-        if (line.find('}')+1) // fim de declaracao de class
+        if (line.find('}')+1) // end of class declaration
         {
             large_key = "";
             continue;
         }
         
-        // encontra os valores chaves no texto
+        // finds the values for the keys in the text
         key = line.substr(0,line.find(':'));
         key.erase(std::remove(key.begin(), key.end(), ' '), key.end());
         key = large_key + key;
@@ -54,6 +56,7 @@ control::control(const std::string& path, const std::string& fieldName)
 control::~control()
 {}
 
+// return the numerical value
 float control::returnThreshold()
 {
     return Param.threshold;

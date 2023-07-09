@@ -1,5 +1,8 @@
 #include "../include/mixing.h"
 
+// functions for mixing class
+
+// start the class
 Mixing::Mixing(int bottom, int left, float scale)
 	:bottom(bottom), left(left), scale(scale)
 {
@@ -7,9 +10,11 @@ Mixing::Mixing(int bottom, int left, float scale)
 	control BedWidth("thresholds.txt", "BedWidth");
 	float bedWidth = BedWidth.returnThreshold();
 	
+	// eulerian field for mixing
 	MixingField = eulerianField(100,3,bottom*scale,bedWidth,"Mixing");
 }
 
+// mixing as described in the article (particles inside a different region)
 void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Point& rightInterface, int frame)
 {
 	std::vector<cv::Point> CirculosTipo1;
@@ -67,6 +72,7 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 
 	MixingField.consolidateField();
 
+	// order particles per height
 	orderVectors_height(particles);
 
 	// find interface
@@ -84,18 +90,22 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 
 //	findInterface(leftInterface, rightInterface, 1, exibir);
 //	cv::line(*exibir,leftInterface,rightInterface,cv::Scalar(0,255,255), 3);
+	// draw concave region of type 1
 	std::vector<std::vector<cv::Point>> concaveShow;
 	concaveShow.push_back(concaveHull(1));
 	cv::drawContours(*exibir, concaveShow, 0, cv::Scalar(255,255,0), 3);
 	
+	// draw the region in binary image
 	hullType1 = cv::Mat::zeros(exibir->size(), CV_8UC1);
 	cv::drawContours(hullType1, concaveShow, 0, cv::Scalar(255), -1);
 //	cv::bitwise_and(hullType1,*exibir,*exibir);
 
+	// draw concave region of type 2
 	concaveShow.clear();
 	concaveShow.push_back(concaveHull(2));
 	cv::drawContours(*exibir, concaveShow, 0, cv::Scalar(0,255,255), 3);
 
+	// draw the region in binary image
 	hullType2 = cv::Mat::zeros(exibir->size(), CV_8UC1);
 	cv::drawContours(hullType2, concaveShow, 0, cv::Scalar(255), -1);
 
@@ -104,11 +114,14 @@ void Mixing::interfaceMixing(cv::Mat* exibir, cv::Point& leftInterface, cv::Poin
 	cv::bitwise_and(particlesType2, hullType1, particlesType2);
 	writeFile << cv::countNonZero(particlesType1) << " " << cv::countNonZero(particlesType2) << std::endl;
 
+	// save data
 	MixingField.writeFrame(frame);
 }
 
+// finds concave region surounding all particles of the same type
 std::vector<cv::Point> Mixing::concaveHull(int type)
 {
+	// list of particles with the correct type
 	std::vector<circles_data> particles_type;
 	for (circles_data circle : particles) {
 //		std::cout << circle.type << " ";
@@ -119,24 +132,29 @@ std::vector<cv::Point> Mixing::concaveHull(int type)
 
 //	std::cout << "Ok" << particles_type.size() << std::endl;
 
+	// lowest particle
 	circles_data reference = particles_type[0];
 
 //	std::cout << "Ok" << std::endl;
 
+	// remove lowest particle from list
 	for (int i = 0; i < particles_type.size()-1; i++) {
 		particles_type[i] = particles_type[i+1];
 	}
 	particles_type.pop_back();
 
+	// order remaining particles by the angle from horizontal with origin in the lowest particle
 	orderVectors_angle(particles_type, reference);
 //	std::cout << compare_angle(particles_type[0],particles_type[10],reference) << std::endl;
 
 	std::vector<circles_data> particles_stack;
 	particles_stack.push_back(reference);
 
+	// maximum angle accepted for a concave turn
 	control DotThreshold("thresholds.txt", "ConcaveDotThreshold");
 	float threshold = DotThreshold.returnThreshold();
 
+	// circulates particles eliminating turns that would make the shape too concave
 	for (int i = 0; i < particles_type.size(); i++) {
 		while (particles_stack.size() > 1){
 			if (left_turn(particles_stack[particles_stack.size()-2],particles_stack[particles_stack.size()-1],particles_type[i]) and not 
@@ -150,6 +168,7 @@ std::vector<cv::Point> Mixing::concaveHull(int type)
 	}
 	particles_stack.push_back(reference);
 
+	// particles in the interface
 	std::vector<cv::Point> particles_return;
 	for (int i = 0; i < particles_stack.size(); i++) {
 		particles_return.push_back(cv::Point(particles_stack[i].x, particles_stack[i].y));
@@ -159,6 +178,7 @@ std::vector<cv::Point> Mixing::concaveHull(int type)
 
 }
 
+// check if it is a left turn
 bool left_turn(circles_data base, circles_data atual, circles_data teste)
 {
 	float dx1 = atual.x - base.x;
@@ -171,6 +191,7 @@ bool left_turn(circles_data base, circles_data atual, circles_data teste)
 	return (vectorProduct > 0) ? true : false;
 }
 
+// check if the right turns is not too concave
 bool large_turn(circles_data base, circles_data atual, circles_data teste, float threshold)
 {
 	float dx1 = 1.0*(atual.x - base.x);
@@ -184,6 +205,7 @@ bool large_turn(circles_data base, circles_data atual, circles_data teste, float
 
 }
 
+// deprecated
 void Mixing::findInterface(cv::Point& leftInterface, cv::Point& rightInterface, int type, cv::Mat* exibir)
 {
 //	leftInterface.y = 0;
@@ -296,6 +318,7 @@ void Mixing::findInterface(cv::Point& leftInterface, cv::Point& rightInterface, 
 	rightInterface.y = dy;
 }
 
+// ordering functions with merge sort
 template <typename T>
 void merge_height(int* array, int const left, int const mid, int const right, std::vector<T>& vector)
 {

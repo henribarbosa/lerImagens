@@ -3,6 +3,9 @@
 
 #include "../include/preProcess.h"
 
+// functions to pre process the images
+
+// average of background images
 void MakeAveragePicture(std::vector<std::string> files)
 {
 	cv::namedWindow("Build mask", cv::WINDOW_NORMAL);
@@ -39,6 +42,7 @@ void MakeAveragePicture(std::vector<std::string> files)
 	cv::imwrite("mask.tif", average); //saves mask to subtract from files
 }
 
+// subtract background from all images
 void SubtractMask(std::vector<std::string> files)
 {
 	cv::namedWindow("Remove background", cv::WINDOW_NORMAL);
@@ -64,6 +68,7 @@ void SubtractMask(std::vector<std::string> files)
 
 		std::string test = files[i];
 
+		// creates new folder to store processed images
 		std::regex pattern("(.*)\\/(\\w+)\\/(\\w+\\.\\w{3})");
 		std::string outFile = std::regex_replace(test, pattern, "$1/Processed/$3");
 
@@ -73,6 +78,7 @@ void SubtractMask(std::vector<std::string> files)
 	}
 }
 
+// apply threshold filter
 void MakeBinary(std::vector<std::string> files)
 {
 	cv::namedWindow("Binary", cv::WINDOW_NORMAL);
@@ -101,6 +107,7 @@ void MakeBinary(std::vector<std::string> files)
 
 }
 
+// rotate images to correct angle for processing
 void RotateImages(std::vector<std::string> files)
 {
 	cv::namedWindow("Rotated images", cv::WINDOW_NORMAL);
@@ -134,7 +141,3 @@ void RotateImages(std::vector<std::string> files)
 
 	}
 }
-
-
-
-

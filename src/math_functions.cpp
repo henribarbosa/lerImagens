@@ -1,5 +1,7 @@
 #include "../include/math_functions.h"
 
+// functions for merge sort
+
 template <typename T>
 void merge(int* array, int const left, int const mid, int const right, std::vector<T>& vector)
 {
