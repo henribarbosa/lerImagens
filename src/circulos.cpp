@@ -1,6 +1,8 @@
 #include "../include/circulos.h"
 
+// functions to find particles
 
+// find the particles in the image
 void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Rect>& rectangles)
 {
 	// adjust bed to not consider borders, too much errors
@@ -8,15 +10,21 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 //	bed.height = bed.height - 14;
 //	bed.width = bed.width - 20;
 
-	cv::Mat figure = (*image)(bed);
+	cv::Mat figure = (*image)(bed); // crop the image to speed up calculation
 
+	// blur the image to smooth noise
 	cv::GaussianBlur(figure,figure,cv::Size(5,5),0);
+
+	// kernel with a hole in the middle
 	cv::Mat1b KernelLocalMaxima(cv::Size(9,9),1u);
 	KernelLocalMaxima.at<uchar>(4,4) = 0u;
+
+	// find local maxima as the point brighter than any point around it
 	cv::Mat ImageLocalMaxima;
 	cv::dilate(figure, ImageLocalMaxima, KernelLocalMaxima);
 	cv::Mat LocalMaxima = (figure > (ImageLocalMaxima - 1));
 
+	// the same but find local minima
 	cv::Mat1b KernelLocalMinima(cv::Size(5,5),1u);
 	KernelLocalMinima.at<uchar>(2,2) = 0u;
 	cv::Mat ImageLocalMinima;
@@ -36,15 +44,20 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 	//cv::dilate(filter, filter, KernelCleanImage);
 	//KernelCleanImage = cv::Mat1b(cv::Size(3,3),1u);
 	//cv::erode(figure, figure, KernelCleanImage);
+	
+	// identify particles from background
 	control CirclesThreshold("thresholds.txt","CirclesThreshols");
 	cv::threshold(figure,filter,CirclesThreshold.returnThreshold(),250,0);
 
+	// brightness of particles of type 1 in bidisperse
 	control typeIdentifier("thresholds.txt", "LowerThreshold");
 	float lowerTypeThreshold = typeIdentifier.returnThreshold();
 
+	// brightness of particles of type 2 in bidisperse
 	control typeIdentifier2("thresholds.txt", "UpperThreshold");
 	float upperTypeThreshold = typeIdentifier2.returnThreshold();
 
+	// maximum brightness to be considered background
 	control CircleMinimumThreshold("thresholds.txt","CircleMinimumValueThreshold");
 	uchar threshold = CircleMinimumThreshold.returnThreshold();
 	
@@ -59,13 +72,14 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 	//		}
 	//	});
 
-	std::vector<circles_data> circlesVector;
-	std::mutex circlesLock;
+	std::vector<circles_data> circlesVector; // stores particles
+	std::mutex circlesLock; // avoid errors trying to write 2 particles at the same time
 
+	// iterate in parallel over all maximum points
 	LocalMaxima.forEach<uchar>(
 		[&figure, &LocalMinima, &circlesVector, &circlesLock, &filter, &lowerTypeThreshold, &upperTypeThreshold, &threshold](uchar& pixel, const int* position)
 		{
-			if (pixel > 0)
+			if (pixel > 0) // is a maximum
 			{
 				//cv::circle(figure,cv::Point(position[1],position[0]),1,cv::Scalar(55,0,0));
 
@@ -108,6 +122,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 				//}
 
 
+				// contracts the particle radius until there is no minimum inside
 				int radius = 100;
 				for (int i = -10; i < 11; i++)
 				{
@@ -121,7 +136,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 							continue;
 						
 						bool MinimumPoint = LocalMinima.at<uchar>(xPos,yPos) > 0u;
-						if (MinimumPoint)
+						if (MinimumPoint) // contract the radius if there is a minimum inside the current radius
 						{
 							int pointDistance = (int)sqrt(pow(i,2)+pow(j,2));
 							if (pointDistance < 1) continue;
@@ -130,7 +145,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 						}
 						
 						uchar pixelValue = figure.at<uchar>(xPos,yPos);
-						if (pixelValue < threshold)
+						if (pixelValue < threshold) // contract the radius if there is a pixel too dark inside (that is probably the background)
 						{
 							int pointDistance = (int)sqrt(pow(i,2)+pow(j,2));
 							radius = (pointDistance < radius)? pointDistance : radius;
@@ -196,13 +211,14 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 				//int centerY = (int)(directionSize[0] + directionSize[1]) / 2;
 				//int centerX = (int)(directionSize[2] + directionSize[3]) / 2;
 
-				if (radius < 3 || radius > 10)
+				if (radius < 3 || radius > 10) // too large or too small to be a particle
 					return;
 				{
-					std::lock_guard<std::mutex> lock(circlesLock);
+					std::lock_guard<std::mutex> lock(circlesLock); // locks to write a particle
 					bool foundOverlap = false;
-					for (int i = 0; i < circlesVector.size(); i++)
+					for (int i = 0; i < circlesVector.size(); i++) // particle too close, probably the same particle
 					{
+						// merge the particles
 						float centerDistance = sqrt(pow(position[1]-circlesVector[i].x,2)+pow(position[0]-circlesVector[i].y,2));
 						float overlap = radius + circlesVector[i].r - centerDistance;
 
@@ -210,6 +226,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 						{
 							if (radius > circlesVector[i].r || centerDistance < 3)
 							{
+								// separate the particles
 								radius -= (int)overlap/2;
 								if (radius < 4)
 								{
@@ -222,6 +239,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 								circlesVector[i].r -= (int)overlap/2;
 								if (circlesVector[i].r < 4)
 								{
+									// combine in one particle
 									circlesVector.erase(circlesVector.begin()+i);
 									break;
 								}
@@ -268,6 +286,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 					}
 					if (not foundOverlap)
 					{
+						// average brightness of center of particle
 						int sum = 0;
 						for (int i = -1; i <= 1; i++)
 						{
@@ -278,6 +297,8 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 							sum = sum + (int)figure.at<uchar>(position[0],position[1] + 1);
 						}
 						float avg = (float)sum / 6.0;
+
+						// type of particle in bidisperse case, for cases with high certainty
 						int type = 0;
 						if (avg < lowerTypeThreshold)
 						{
@@ -288,6 +309,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 							type = 2;
 						}
 
+						// add the particle in the list
 						circlesVector.push_back(circles_data(position[1],position[0],radius,false,avg,type));
 						//cv::circle(figure,cv::Point(position[1],position[0]),radius,cv::Scalar(127,0,0));
 					}
@@ -323,6 +345,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 	//	circles.erase(std::remove(circles.begin(), circles.end(), *item), circles.end());
 	//}
 
+	// adjust the position with relation to the image origin
 	for (int i = 0; i < circlesVector.size(); ++i)
 	{
 		circlesVector[i].x += bed.x;
@@ -330,12 +353,14 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 	}
 
 	//std::vector<bool> inPlug; inPlug.resize(circles.size(), false);
+	// iterate over all particles
 	for(int i = 0; i < circlesVector.size(); i++)
 	{
 		//cv::Vec3i c = circles[i];
 		//cv::Point center = cv::Point(c[0], c[1]);
 		//int radius = c[2];
 
+		// check if the particle is inside a plug
 		for (std::vector<cv::Rect>::iterator plug = rectangles.begin(); plug != rectangles.end(); ++plug)
 		{
 			if (circlesVector[i].inPlug)
@@ -348,6 +373,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 			}
 		}
 
+		// for particles with uncertain type, decide with the close particles 
 		if (circlesVector[i].type == 0)
 		{
 			int type1Bin = 0;
@@ -363,6 +389,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 			circlesVector[i].type = (type1Bin >= type2Bin) ? 1 : 2;
 		}
 
+		// diferent colors for visual aid
 		if (circlesVector[i].type == 1) {
 			cv::circle(*exibir, cv::Point(circlesVector[i].x,circlesVector[i].y), circlesVector[i].r, cv::Scalar(255,0,255), 1, cv::LINE_AA);
 		}
@@ -371,6 +398,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 		}
 	}
 
+	// save the data
 	std::ofstream file;
 	file.open("Files/circulos.txt",std::ios::trunc);
 	file << circlesVector.size() << " circulos" << std::endl;
@@ -381,6 +409,7 @@ void circulos(cv::Mat* image, cv::Mat* exibir, cv::Rect& bed, std::vector<cv::Re
 	file.close();
 }
 
+// deprecated functions
 void findBestCorrespondence(cv::Mat* image, cv::Rect* window, int index, std::vector<int>* bestCorrespondence)
 {
 	int bestValue = 0;
