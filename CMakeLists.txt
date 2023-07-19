@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(lerImagem)
-find_package( OpenCV REQUIRED PATHS /home/henrique/opencv/build NO_DEFAULT_PATH)
+find_package( OpenCV REQUIRED PATHS /home/user/opencv/build NO_DEFAULT_PATH)
 add_executable( lerImagem src/altura.cpp src/circulos.cpp src/lerImagem.cpp src/preProcess.cpp src/auction.cpp src/hough.cpp src/lagrangian.cpp src/circles_data.cpp src/eulerianField.cpp src/read_control.cpp src/mixing.cpp src/simulation.cpp src/eulerianFieldSimulation.cpp)
 target_link_libraries( lerImagem ${OpenCV_LIBS})
 
