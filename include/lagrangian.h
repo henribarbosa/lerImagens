@@ -48,7 +48,7 @@ private:
 	float scale; // scale of the bed
 	int bottom = 0, left = 0; // position of the axis origin
 
-	eulerianField VelocityX, VelocityY, massFluxX, massFluxY; // eulerian fields for saving
+	eulerianField VelocityX, VelocityY, massFluxX, massFluxY, particles; // eulerian fields for saving
 	eulerianFieldGranularTemp Temperature;
 	
 	void createFile(); // start file for saving

@@ -61,6 +61,7 @@ void lagrangian::startFields()
 	VelocityY = eulerianField(50,5,bottom*scale,bedWidth,"VelocityY");
 	massFluxX = eulerianField(50,5,bottom*scale,bedWidth,"massFluxX");
 	massFluxY = eulerianField(50,5,bottom*scale,bedWidth,"massFluxY");
+	particles = eulerianField(50,5,bottom*scale,bedWidth,"particles");
 }
 
 // header of the file for tracking
@@ -545,6 +546,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 			VelocityY.addParticle(-1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			massFluxX.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			massFluxY.addParticle(-1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+			particles.addParticle(1,(bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			
 			usedlabels[lines_assignment[i]] = true; // reserve label
 		}
@@ -600,6 +602,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 					VelocityY.addParticle(-1*(points[i].x - pastPoints[possiblePointsPositions[j]].x)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 					massFluxX.addParticle(-1*(points[i].y - pastPoints[possiblePointsPositions[j]].y)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 					massFluxY.addParticle(-1*(points[i].x - pastPoints[possiblePointsPositions[j]].x)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+					particles.addParticle(1, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 
 					foundCorrespondent = true;
 					usedlabels[j] = true;
@@ -674,8 +677,9 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 						Temperature.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, -1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
 						VelocityX.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 						VelocityY.addParticle(-1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
-						massFluxX.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, (bottom - points[i].x)*scale*M_PI*25, (left - points[i].y)*scale);
-						massFluxY.addParticle(-1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale*M_PI*25, (left - points[i].y)*scale);
+						massFluxX.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+						massFluxY.addParticle(-1*(points[i].x - kalmanMidlePoints[j].first)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+						particles.addParticle(1, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 
 						foundCorrespondent = true;
 						for (int k = 0; k < labels.size(); k++)
@@ -744,6 +748,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	VelocityY.writeFrame(frame);
 	massFluxX.writeFrame(frame);
 	massFluxY.writeFrame(frame);
+	particles.writeFrame(frame);
 
 	// update lists
 	labels = new_labels;
