@@ -4,7 +4,7 @@ Program to identify and track particles in a narrow fluidized bed, along with ca
 
 ## Install
 
-On CMakeLists.txt fix the [opencv](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html) build path for your computer, for example **/home/user/opencv/build**.
+The program is intended to run on a Linux distribution. On CMakeLists.txt fix the [opencv](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html) build path for your computer, for example **/home/user/opencv/build**.
 
 ```cmake
 find_package( OpenCV REQUIRED PATHS /home/user/opencv/build NO_DEFAULT_PATH)
