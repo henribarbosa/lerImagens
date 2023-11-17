@@ -49,7 +49,7 @@ private:
 	int bottom = 0, left = 0; // position of the axis origin
 
 	eulerianField VelocityX, VelocityY, massFluxX, massFluxY, particles; // eulerian fields for saving
-	eulerianFieldGranularTemp Temperature;
+	eulerianFieldGranularTemp Temperature, Temperature_stream, Temperature_cross;
 	
 	void createFile(); // start file for saving
 public:

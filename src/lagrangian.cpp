@@ -62,6 +62,8 @@ void lagrangian::startFields()
 	massFluxX = eulerianField(50,5,bottom*scale,bedWidth,"massFluxX");
 	massFluxY = eulerianField(50,5,bottom*scale,bedWidth,"massFluxY");
 	particles = eulerianField(50,5,bottom*scale,bedWidth,"particles");
+	Temperature_stream = eulerianFieldGranularTemp(20,2,bottom*scale,bedWidth,"GranularTemperatureStream");
+	Temperature_cross = eulerianFieldGranularTemp(20,2,bottom*scale,bedWidth,"GranularTemperatureCross");
 }
 
 // header of the file for tracking
@@ -547,6 +549,8 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 			massFluxX.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			massFluxY.addParticle(-1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			particles.addParticle(1,(bottom - points[i].x)*scale, (left - points[i].y)*scale);
+			Temperature_cross.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale, 0, (bottom-points[i].x)*scale, (left-points[i].y)*scale);
+			Temperature_stream.addParticle(0, -1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale, (bottom-points[i].x)*scale, (left-points[i].y)*scale);
 			
 			usedlabels[lines_assignment[i]] = true; // reserve label
 		}
@@ -603,6 +607,8 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 					massFluxX.addParticle(-1*(points[i].y - pastPoints[possiblePointsPositions[j]].y)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 					massFluxY.addParticle(-1*(points[i].x - pastPoints[possiblePointsPositions[j]].x)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 					particles.addParticle(1, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+					Temperature_cross.addParticle(-1*(points[i].y - pastPoints[possiblePointsPositions[j]].y)*scale, 0, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
+					Temperature_stream.addParticle(0, -1*(points[i].x - pastPoints[possiblePointsPositions[j]].x)*scale, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
 
 					foundCorrespondent = true;
 					usedlabels[j] = true;
@@ -680,6 +686,8 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 						massFluxX.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 						massFluxY.addParticle(-1*(points[i].x - kalmanMidlePoints[j].first)*scale*M_PI*25, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 						particles.addParticle(1, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
+						Temperature_stream.addParticle(0, -1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
+						Temperature_cross.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, 0, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
 
 						foundCorrespondent = true;
 						for (int k = 0; k < labels.size(); k++)
@@ -749,6 +757,10 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	massFluxX.writeFrame(frame);
 	massFluxY.writeFrame(frame);
 	particles.writeFrame(frame);
+	Temperature_stream.consolidateField();
+	Temperature_cross.consolidateField();
+	Temperature_stream.writeFrame(frame);
+	Temperature_cross.writeFrame(frame);
 
 	// update lists
 	labels = new_labels;
