@@ -464,6 +464,8 @@ void lagrangian::firstPass(std::vector<circles_data>& points)
 // process frames to update labels and add points to tracked particles
 void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points, std::vector<circles_data>& pastPoints, int* lines_assignment, int lines_size)
 {
+	std::fstream fileVelocity;
+	fileVelocity.open("Files/velocity_per_particle.txt", std::ios::out | std::ios::trunc);
 	frame++; // update frame
 
 	//for (int i = 0; i < labels.size(); i++)
@@ -551,6 +553,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 			particles.addParticle(1,(bottom - points[i].x)*scale, (left - points[i].y)*scale);
 			Temperature_cross.addParticle(-1*(points[i].y - pastPoints[lines_assignment[i]].y)*scale, 0, (bottom-points[i].x)*scale, (left-points[i].y)*scale);
 			Temperature_stream.addParticle(0, -1*(points[i].x - pastPoints[lines_assignment[i]].x)*scale, (bottom-points[i].x)*scale, (left-points[i].y)*scale);
+			fileVelocity << -1*(points[i].y - pastPoints[lines_assignment[i]].y) << " " << -1*(points[i].x - pastPoints[lines_assignment[i]].x) << std::endl;
 			
 			usedlabels[lines_assignment[i]] = true; // reserve label
 		}
@@ -609,6 +612,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 					particles.addParticle(1, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 					Temperature_cross.addParticle(-1*(points[i].y - pastPoints[possiblePointsPositions[j]].y)*scale, 0, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
 					Temperature_stream.addParticle(0, -1*(points[i].x - pastPoints[possiblePointsPositions[j]].x)*scale, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
+					fileVelocity << -1*(points[i].y - pastPoints[possiblePointsPositions[j]].y) << " " << -1*(points[i].x - pastPoints[possiblePointsPositions[j]].x) << std::endl;
 
 					foundCorrespondent = true;
 					usedlabels[j] = true;
@@ -688,6 +692,7 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 						particles.addParticle(1, (bottom - points[i].x)*scale, (left - points[i].y)*scale);
 						Temperature_stream.addParticle(0, -1*(points[i].x - kalmanMidlePoints[j].first)*scale, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
 						Temperature_cross.addParticle(-1*(points[i].y - kalmanMidlePoints[j].second)*scale, 0, (bottom - points[i].x)*scale, (left-points[i].y)*scale);
+						fileVelocity << -1*(points[i].y - kalmanMidlePoints[j].second) << " " << -1*(points[i].x - kalmanMidlePoints[j].first) << std::endl;
 
 						foundCorrespondent = true;
 						for (int k = 0; k < labels.size(); k++)
@@ -770,6 +775,8 @@ void lagrangian::updateLabels(cv::Mat* exibir, std::vector<circles_data>& points
 	kalmanMidlePoints = kalmanMidlePointsNew;
 	kalmanPoints = kalmanPointsNew;
 	singlePoints = singleParticlesNew;
+
+	fileVelocity.close();
 }
 
 // auxiliary function

@@ -1,1 +1,2 @@
-/media/dados0/Mestrado/Leito_Ar/Mono_Velocidade_1.77_angle_0
+/media/dados0/Mestrado/Leito_Ar/Coef_rest_0.1_coef_fric_0.9_DiFelice/Mono_Velocidade_1.77_angle_0
+/media/dados0/Mestrado/Leito_Ar/Coef_rest_0.1_coef_fric_0.9_DiFelice/Mono_Velocidade_1.77_angle_15

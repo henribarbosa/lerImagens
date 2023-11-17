@@ -22,7 +22,7 @@ MinimumPlugFraction : 0.5
 MinimumPlugHeight : 20
 
 # Threshold to find different particle in the interface (midle value between ligther and darker particles)
-LowerThreshold : 145
+LowerThreshold : 180
 UpperThreshold : 220
 
 # Control how concave the particles envelope can be
